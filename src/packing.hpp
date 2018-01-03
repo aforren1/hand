@@ -1,6 +1,6 @@
 #ifndef PACKING_H
 #define PACKING_H
-#include "endian.hpp"
+#include <array>
 
 namespace packing {
     // these methods are for converting int/float/etc to uint8_t arrays
