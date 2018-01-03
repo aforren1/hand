@@ -14,11 +14,15 @@ namespace constants {
     };
 
     namespace adc {
+        const float pi = 4.0 * atan(1.0);
         const unsigned int resolution = 16; /// ADC resolution (TODO: allow user to change)
         const unsigned int averaging = 16; /// Number of averaged samples *within* ADC
+        const float cos_rot = cos(pi / 4.0);
+        const float sin_rot = sin(pi / 4.0);
+        const float max_int = 65535;
     };
 
-    struct calibration {
+    namespace calibration {
         const unsigned int settling_ms = 100; /// settling time during calibration
         const unsigned int max_iter = 1; /// maximum iterations in optimization?
         const unsigned int n_adc_readings = 1000; /// number of ADC readings to average over
