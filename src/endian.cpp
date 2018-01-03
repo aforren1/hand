@@ -26,3 +26,8 @@ int32_t endian::swap_int32( int32_t val )
     val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF ); 
     return (val << 16) | ((val >> 16) & 0xFFFF);
 }
+
+float endian::swap_float(float val){
+       long temp = endian::swap_int32(*(unsigned int*)&val);
+       return *(float*)&temp;
+}
