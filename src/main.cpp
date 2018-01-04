@@ -4,7 +4,7 @@
 #include "analog.hpp"
 #include "communication.hpp"
 
-std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
+std::array<uint8_t, 64> buffer_rx;      // uint8_t == "byte"
 int hid_code = 0;                       /// HID communication status
 bool is_sampling = false;               /// false is settings, true is sampling
 Settings settings(100, false, false);   // default to 100 hz, "raw" mode, verbosity off
@@ -63,7 +63,7 @@ void loop()
     // is folded into the busy wait
     // if there is a new message, our timing will be borked anyway
     hid_code = communication::receiveData(buffer_rx); // Check for any new messages from host
-    if (hid_code > 0)                     // Deal with parsing apart the message and evaluate state changes
+    if (hid_code > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
         handleInput(is_sampling, buffer_rx, settings);
     }

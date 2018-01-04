@@ -6,17 +6,19 @@
 #include "packing.hpp"
 
 template <class T>
-void num2bigendbytes(T num, std::array<unsigned char, sizeof(T)> &b) {
-  memcpy(b.data(), &num, sizeof(T));
-  std::reverse(std::begin(b), std::end(b));
+void num2bigendbytes(T num, std::array<unsigned char, sizeof(T)> &b)
+{
+    memcpy(b.data(), &num, sizeof(T));
+    std::reverse(std::begin(b), std::end(b));
 }
 
 template <class T>
-T bigendbytes2num(std::array<unsigned char, sizeof(T)> &b) {
-  T num;
-  std::reverse(std::begin(b), std::end(b));
-  std::memcpy(&num, b.data(), sizeof(T));
-  return num;
+T bigendbytes2num(std::array<unsigned char, sizeof(T)> &b)
+{
+    T num;
+    std::reverse(std::begin(b), std::end(b));
+    std::memcpy(&num, b.data(), sizeof(T));
+    return num;
 }
 
 extern template void packing::num2bigendbytes<int>(int num, std::array<unsigned char, sizeof(int)> &b);
