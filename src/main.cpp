@@ -12,7 +12,9 @@ std::array<uint16_t, 20> recent_values; /// mildly strong assumption that we're 
 std::array<float, 15> converted_recent_values;
 
 elapsedMillis adc_data_timestamp;
+unsigned long timestamp = 0;
 elapsedMicros between_adc_readings_timer;
+int deviation = 0;
 
 void setup()
 {
@@ -52,11 +54,11 @@ void loop()
         if (settings.getGameMode())
         { // if in "game" mode, perform rotation and send data
             analog::applyRotation(recent_values, converted_recent_values);
-            hid::sendGameSample(timestamp, converted_recent_values);
+            communication::sendGameSample(converted_recent_values);
         }
         else
         { // send data immediately
-            hid::sendRawSample(timestamp, deviation, recent_values);
+            communication::sendRawSample(timestamp, deviation, recent_values);
         }
     }
     // check for data *after* read, so the time it takes to do that

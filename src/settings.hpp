@@ -21,6 +21,7 @@ struct Settings
     bool game_mode;                   /// Whether to precompute the x,y,z per finger
     bool verbosity;                   /// Whether to push messages during calibration, etc.
     GainSettings gain_settings;       /// Manages the op-amp settings
+    GainSettings gain_settings_copy;  /// Copy of the settings, used to infer which channels to recalibrate
     // TODO: add ADC averaging, resolution to settings?
 
     Settings(float, bool, bool); // sampling frequency in hz, game mode, and verbosity

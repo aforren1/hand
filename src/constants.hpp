@@ -1,6 +1,8 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
+#include <ADC.h>
+#include <cmath>
 #include <array>
 
 namespace constants
