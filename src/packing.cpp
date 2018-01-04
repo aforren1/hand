@@ -26,5 +26,14 @@ T packing::bigendbytes2num(unsigned char b[sizeof(T)])
     return num;
 }
 
-template void packing::num2bigendbytes<unsigned int>(unsigned int num, unsigned char b[sizeof(unsigned int)]);
-template void packing::num2bigendbytes<int>(int num, unsigned char b[sizeof(int)]);
+extern template void packing::num2bigendbytes<int>(int num, unsigned char b[sizeof(int)]);
+extern template void packing::num2bigendbytes<unsigned int>(unsigned int num, unsigned char b[sizeof(unsigned int)]);
+extern template void packing::num2bigendbytes<long>(long num, unsigned char b[sizeof(long)]);
+extern template void packing::num2bigendbytes<unsigned long>(unsigned long num, unsigned char b[sizeof(unsigned long)]);
+extern template void packing::num2bigendbytes<float>(float num, unsigned char b[sizeof(float)]);
+
+extern template int packing::bigendbytes2num(unsigned char b[sizeof(int)]);
+extern template unsigned int packing::bigendbytes2num(unsigned char b[sizeof(unsigned int)]);
+extern template long packing::bigendbytes2num(unsigned char b[sizeof(long)]);
+extern template unsigned long packing::bigendbytes2num(unsigned char b[sizeof(unsigned long)]);
+extern template float packing::bigendbytes2num(unsigned char b[sizeof(float)]);
