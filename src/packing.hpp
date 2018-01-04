@@ -1,5 +1,6 @@
 #ifndef PACKING_H
 #define PACKING_H
+#include <array>
 
 namespace packing
 {
