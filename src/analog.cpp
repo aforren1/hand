@@ -16,12 +16,18 @@ void analog::setupADC()
     adc->setReference(ADC_REFERENCE::REF_EXT);
 }
 
-void analog::readSingle(std::array<uint16_t, 20> &recent_values)
+void analog::readAllOnce(std::array<uint16_t, 20> &recent_values)
 {
     for (std::size_t i = 0; i < cpin::sensor_pins.size(); ++i)
     {
         recent_values[i] = adc->analogRead(cpin::sensor_pins[i]);
     }
+}
+
+float readChannelMillivolt(unsigned char channel) {
+    // returns analog reading in millivolts
+    unsigned int val = adc->analogRead(channel);
+    return val * 3.3/adc->getMaxValue(ADC_0) * 1000;
 }
 
 void analog::applyRotation(std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)
