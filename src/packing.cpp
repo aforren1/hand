@@ -14,14 +14,14 @@ template <class T>
 void packing::num2bigendbytes(T num, unsigned char b[sizeof(T)])
 {
     memcpy(b, &num, sizeof(T));
-    reverse_range(b, 0, sizeof(T) - 1);
+    packing::reverse_range(b, 0, sizeof(T) - 1);
 }
 
 template <class T>
 T packing::bigendbytes2num(unsigned char b[sizeof(T)])
 {
     T num;
-    reverse_range(b, 0, sizeof(T) - 1);
+    packing::reverse_range(b, 0, sizeof(T) - 1);
     memcpy(&num, b, sizeof(T));
     return num;
 }
