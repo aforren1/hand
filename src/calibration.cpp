@@ -2,7 +2,7 @@
 #include "analog.hpp"
 #include "calibration.hpp"
 #include "settings.hpp"
-#include <numeric>
+#include <array>
 
 namespace cpin = constants::pin;
 namespace ccalib = constants::calibration;
@@ -24,6 +24,7 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
 // 0th index is front gain, 1st index is fine gain, 2nd index is output gain, 3rd is product (not used here)
 {
     std::array<float, ccalib::n_adc_readings> adc_readings;
+    // coarse adjustments first
     for (int iter = 0; iter < ccalib::max_iter; iter++)
     {
         for (size_t i = 0; i < adc_readings.size(); ++i)
@@ -52,10 +53,13 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
         float desired_output_gain = gain_vec[2];
         float coarse_mv_max = ccalib::vcc * 14 * 0.85; // TODO: make const
         float excess_mv = 0;
-        if (error_mv > coarse_mv_max) {
+        if (error_mv > coarse_mv_max)
+        {
             excess_mv = error_mv - coarse_mv_max;
             error_mv = coarse_mv_max;
-        } else if (error_mv < -coarse_mv_max) {
+        }
+        else if (error_mv < -coarse_mv_max)
+        {
             excess_mv = error_mv + coarse_mv_max;
             error_mv = -coarse_mv_max;
         }
@@ -65,27 +69,32 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
         uint16_t gain_cmsg = writeToPGA(0x04, desired_front_gain, desired_output_gain, desired_coarse_offset);
         uint16_t coarse_multi = gain_cmsg & 0x000f;
         uint16_t coarse_sign = (gain_cmsg & 0x0010) >> 4;
-        if (coarse_sign) {
+        if (coarse_sign) // truthy
+        {
             excess_mv = error_mv - coarse_multi * ccalib::vcc * 0.85;
             gain_vec[3] = -coarse_multi;
-        } else {
+        }
+        else
+        {
             excess_mv = error_mv + coarse_multi * ccalib::vcc * 0.85;
             gain_vec[3] = coarse_multi;
         }
         // Part 2: Modify zero
         desired_fine_gain = gain_vec[1];
-        float desired_fine_offset = (ccalib::target_fraction / (desired_fine_gain * desired_output_gain)) - 
-                                     desired_front_gain * excess_mv / (ccalib::mvcc);
+        float desired_fine_offset = (ccalib::target_fraction / (desired_fine_gain * desired_output_gain)) -
+                                    desired_front_gain * excess_mv / (ccalib::mvcc);
         gain_vec[4] = desired_fine_offset;
         uint16_t offset_msg = writeToPGA(0x01, desired_fine_offset, 0, 0);
         uint16_t gain_msg = writeToPGA(0x02, desired_fine_gain, 0, 0);
     }
 
     // Now we do our fine adjustments
-    for (int iter2 = 0; iter2 < ccalib::max_fine_iter; iter2++) {
+    for (int iter2 = 0; iter2 < ccalib::max_fine_iter; iter2++)
+    {
         float step = 0.0001 / desired_front_gain;
         float multiplier = 3;
-        if (desired_front_gain > 30) {
+        if (desired_front_gain > 30)
+        {
             multiplier = 5;
         }
         // ripped from earlier
@@ -100,10 +109,13 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
         if (adjust_mv > ccalib::tol_mv)
         {
             iter_step = -step * multiplier * adjust_mv;
-        } else if (adjust_mv < -ccalib::tol_mv)
+        }
+        else if (adjust_mv < -ccalib::tol_mv)
         {
             iter_step = -step * multiplier * adjust_mv;
-        } else {
+        }
+        else
+        {
             continue; // criterion met
         }
         gain_vec[5] += iter_step; // update fine offset
@@ -115,7 +127,7 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
     {
         return 0;
     }
-    return 1;
+    return 1; // fine failed to find best answer
 }
 
 float calibration::inverseTransferFunction(float val, std::array<float, 6> &gain_vec)
