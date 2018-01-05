@@ -43,6 +43,14 @@ const float vcc = 3.33; /// Matching Jacob here, but should it be 3.3?
 const float mvcc = vcc * 1000;
 const float tol_mv = 20;  /// Used for fine adjustments
 };
+
+namespace multiplex
+{
+const uint8_t pga_addr = 0x40;
+const uint8_t plex_a_addr = 0x70;
+const uint8_t plex_b_addr = 0x71;
+const uint8_t plex_c_addr = 0x72;
+};
 };
 
 #endif
