@@ -5,10 +5,10 @@
 
 struct GainSettings
 {
-    // first dim is finger, second is slot, 3rd is value
-    std::array<std::array<std::array<float, 4>, 4>, 5> gains;
-    std::array<float, 4> lower_bounds;
-    std::array<float, 4> upper_bounds;
+    // first dim is finger, second is slot, 3rd is value (front gain, fine gain, output gain, coarse offset, fine offset)
+    std::array<std::array<std::array<float, 6>, 4>, 5> gains;
+    std::array<float, 6> lower_bounds;
+    std::array<float, 6> upper_bounds;
     GainSettings();
     void updateProduct(int finger, int channel, int slot);
 };

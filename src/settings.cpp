@@ -109,10 +109,12 @@ GainSettings::GainSettings()
             gains[i][j][1] = 1;      // fine gain
             gains[i][j][2] = 9;      // output gain
             gains[i][j][3] = 32 * 9; // product
+            gains[i][j][4] = 0; // coarse offset (TODO: fix)
+            gains[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
-    lower_bounds = {{0, 0, 0, 0}};
-    upper_bounds = {{128, 1, 100, 12800}}; // really not sure about 100 and 12800
+    lower_bounds = {{0, 0, 0, 0, 0, 0}};
+    upper_bounds = {{128, 1, 100, 12800, 10, 1000}}; // really not sure about 100 and 12800 and trailing 10s
 }
 
 void GainSettings::updateProduct(int finger, int channel, int slot)
