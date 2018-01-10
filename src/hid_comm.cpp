@@ -5,13 +5,12 @@ void communication::initComm() {}
 
 void communication::sendData(std::array<uint8_t, 64> &tx_data)
 {
-    RawHID.send(tx_data.data(), 1);
+    RawHID.send(tx_data.data(), 1); //TODO: set to 0?
 }
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
     communication::packGameSample(game_sample, tx_data);
     communication::sendData(tx_data);
-
 }
 
 void communication::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)

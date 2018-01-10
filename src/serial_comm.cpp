@@ -8,14 +8,13 @@ void communication::initComm()
 }
 void communication::sendData(std::array<uint8_t, 64> &tx_data)
 {
-    Serial.write(tx_data.data(), 64); // TODO: append newline? The output won't be great in the Arduino IDE anyway...
+    Serial.write(tx_data.data(), 64);
     Serial.send_now();
 }
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
     communication::packGameSample(game_sample, tx_data);
     communication::sendData(tx_data);
-
 }
 
 void communication::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
