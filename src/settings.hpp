@@ -3,13 +3,13 @@
 
 #include <array>
 
-struct GainSettings
+struct PGASettings
 {
     // first dim is finger, second is slot, 3rd is value (front gain, fine gain, output gain, coarse offset, fine offset)
-    std::array<std::array<std::array<float, 6>, 4>, 5> gains;
+    std::array<std::array<std::array<float, 6>, 4>, 5> gains_and_offsets;
     std::array<float, 6> lower_bounds;
     std::array<float, 6> upper_bounds;
-    GainSettings();
+    PGASettings();
     void updateProduct(int finger, int channel, int slot);
 };
 
@@ -20,8 +20,8 @@ struct Settings
     unsigned long sampling_period_us; // sampling_period_s * 1000000
     bool game_mode;                   /// Whether to precompute the x,y,z per finger
     bool verbosity;                   /// Whether to push messages during calibration, etc.
-    GainSettings gain_settings;       /// Manages the op-amp settings
-    GainSettings gain_settings_copy;  /// Copy of the settings, used to infer which channels to recalibrate
+    PGASettings pga_settings;       /// Manages the op-amp settings
+    PGASettings pga_settings_copy;  /// Copy of the settings, used to infer which channels to recalibrate
     // TODO: add ADC averaging, resolution to settings?
 
     Settings(float, bool, bool); // sampling frequency in hz, game mode, and verbosity

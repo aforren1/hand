@@ -3,11 +3,12 @@
 #include "calibration.hpp"
 #include "settings.hpp"
 #include <array>
+#include <algorithm>
 
 namespace cpin = constants::pin;
 namespace ccalib = constants::calibration;
 
-int calibration::calibrateAllChannels(GainSettings &gain_settings)
+int calibration::calibrateAllChannels(PGASettings &pga_settings)
 // should num_channels always be 20? If I understand, the
 // current code only calibrates one sensor??
 {
@@ -15,7 +16,7 @@ int calibration::calibrateAllChannels(GainSettings &gain_settings)
     {
         for (int j = 0; j < 4; j++)
         {
-            calibration::calibrateChannel(cpin::sensor_pins_nested[i][j], gain_settings.gains[i][j]);
+            calibration::calibrateChannel(cpin::sensor_pins_nested[i][j], pga_settings.gains_and_offsets[i][j]);
         }
     }
 }
@@ -33,7 +34,7 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
         }
         float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
         float average_mv = sum / ccalib::n_adc_readings;
-        float diff_mv = calibration::inverseTransferFunction(average, gain_vec);
+        float diff_mv = calibration::inverseTransferFunction(average_mv, gain_vec);
         float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
         float error_mv = diff_mv - 0; // ??? why
         float error_out = 0;
@@ -80,7 +81,7 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
             gain_vec[3] = coarse_multi;
         }
         // Part 2: Modify zero
-        desired_fine_gain = gain_vec[1];
+        desired_front_gain = gain_vec[1];
         float desired_fine_offset = (ccalib::target_fraction / (desired_fine_gain * desired_output_gain)) -
                                     desired_front_gain * excess_mv / (ccalib::mvcc);
         gain_vec[4] = desired_fine_offset;
@@ -102,9 +103,9 @@ int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &g
         {
             adc_readings[i] = analog::readChannelMillivolt(channel);
         }
-        sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
-        average_mv = sum / ccalib::n_adc_readings;
-        adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
+        float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
+        float average_mv = sum / ccalib::n_adc_readings;
+        float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
         float iter_step = 0;
         if (adjust_mv > ccalib::tol_mv)
         {

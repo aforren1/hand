@@ -1,3 +1,4 @@
+#include "constants.hpp"
 #include "settings.hpp"
 #include <algorithm>
 
@@ -55,7 +56,7 @@ int Settings::setGain(int finger, int channel, int slot, float value)
         return 1;
     }
     // check boundaries
-    if (value < gain_settings.lower_bounds[slot] || value > gain_settings.upper_bounds[slot])
+    if (value < pga_settings.lower_bounds[slot] || value > pga_settings.upper_bounds[slot])
     {
         return 1;
     }
@@ -65,8 +66,8 @@ int Settings::setGain(int finger, int channel, int slot, float value)
         {
             for (int j = 0; j < 3; j++)
             {
-                gain_settings.gains[i][j][slot] = value;
-                gain_settings.updateProduct(i, j, slot);
+                pga_settings.gains_and_offsets[i][j][slot] = value;
+                pga_settings.updateProduct(i, j, slot);
             }
         }
     }
@@ -74,50 +75,50 @@ int Settings::setGain(int finger, int channel, int slot, float value)
     { // apply setting to single channel, all fingers
         for (int i = 0; i < 4; i++)
         {
-            gain_settings.gains[i][channel][slot] = value;
-            gain_settings.updateProduct(i, channel, slot);
+            pga_settings.gains_and_offsets[i][channel][slot] = value;
+            pga_settings.updateProduct(i, channel, slot);
         }
     }
     else if (channel == -1)
     { // apply setting to all channels, single finger
         for (int j = 0; j < 3; j++)
         {
-            gain_settings.gains[finger][j][slot] = value;
-            gain_settings.updateProduct(finger, j, slot);
+            pga_settings.gains_and_offsets[finger][j][slot] = value;
+            pga_settings.updateProduct(finger, j, slot);
         }
     }
     else
     { // apply setting to single channel, single finger
-        gain_settings.gains[finger][channel][slot] = value;
-        gain_settings.updateProduct(finger, channel, slot);
+        pga_settings.gains_and_offsets[finger][channel][slot] = value;
+        pga_settings.updateProduct(finger, channel, slot);
     }
     return 0;
 }
 
 float Settings::getGain(int finger, int channel, int slot)
 {
-    return gain_settings.gains[finger][channel][slot];
+    return pga_settings.gains_and_offsets[finger][channel][slot];
 }
 
-GainSettings::GainSettings()
+PGASettings::PGASettings()
 {
     for (int i = 0; i < 5; i++)
     { // iterate over fingers
         for (int j = 0; j < 4; j++)
         {                            // over channels
-            gains[i][j][0] = 32;     // front gain
-            gains[i][j][1] = 1;      // fine gain
-            gains[i][j][2] = 9;      // output gain
-            gains[i][j][3] = 32 * 9; // product
-            gains[i][j][4] = 0; // coarse offset (TODO: fix)
-            gains[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
+            gains_and_offsets[i][j][0] = 32;     // front gain
+            gains_and_offsets[i][j][1] = 1;      // fine gain
+            gains_and_offsets[i][j][2] = 9;      // output gain
+            gains_and_offsets[i][j][3] = 32 * 9; // product
+            gains_and_offsets[i][j][4] = 0; // coarse offset (TODO: fix)
+            gains_and_offsets[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
     lower_bounds = {{0, 0, 0, 0, 0, 0}};
     upper_bounds = {{128, 1, 100, 12800, 10, 1000}}; // really not sure about 100 and 12800 and trailing 10s
 }
 
-void GainSettings::updateProduct(int finger, int channel, int slot)
+void PGASettings::updateProduct(int finger, int channel, int slot)
 {
     if (slot == 3)
     { // set the product, so use lookup table to update other elements
@@ -125,7 +126,7 @@ void GainSettings::updateProduct(int finger, int channel, int slot)
         float small_val = 0; // lower limit for the fine gain
         float large_val = 1; // upper limit for the fine gain
         float front_val;
-        float base_gain = gains[finger][channel][3] / gains[finger][channel][2];
+        float base_gain = gains_and_offsets[finger][channel][3] / gains_and_offsets[finger][channel][2];
         if (base_gain <= 4.1)
         {
             front_val = 4;
@@ -158,14 +159,14 @@ void GainSettings::updateProduct(int finger, int channel, int slot)
         {
             front_val = 128;
         }
-        gains[finger][channel][0] = front_val;
+        gains_and_offsets[finger][channel][0] = front_val;
         // restrict to [0, 1]
-        gains[finger][channel][1] = std::min(std::max(base_gain / front_val, small_val), large_val);
+        gains_and_offsets[finger][channel][1] = std::min(std::max(base_gain / front_val, small_val), large_val);
     }
     else
     { // set one of the components, so recompute the product
-        gains[finger][channel][3] = gains[finger][channel][0] *
-                                    gains[finger][channel][1] *
-                                    gains[finger][channel][2];
+        gains_and_offsets[finger][channel][3] = gains_and_offsets[finger][channel][0] *
+                                    gains_and_offsets[finger][channel][1] *
+                                    gains_[finger][channel][2];
     }
 }
