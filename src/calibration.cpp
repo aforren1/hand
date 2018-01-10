@@ -3,7 +3,7 @@
 #include "calibration.hpp"
 #include "settings.hpp"
 #include <array>
-#include <algorithm>
+#include <numeric>
 
 namespace cpin = constants::pin;
 namespace ccalib = constants::calibration;
