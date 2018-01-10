@@ -1,6 +1,8 @@
 #include <array>
 #include "communication.hpp"
 
+void communication::initComm() {}
+
 void communication::sendData(std::array<uint8_t, 64> &tx_data)
 {
     RawHID.send(tx_data.data(), 1);

@@ -1,8 +1,11 @@
 #include <array>
 #include "communication.hpp"
 
-Serial.setTimeout(0); // TODO: not valid, we should just wrap this stuff up in a class
-
+void communication::initComm()
+{
+    Serial.begin(9600);
+    Serial.setTimeout(0);
+}
 void communication::sendData(std::array<uint8_t, 64> &tx_data)
 {
     Serial.write(tx_data.data(), 64); // TODO: append newline? The output won't be great in the Arduino IDE anyway...
