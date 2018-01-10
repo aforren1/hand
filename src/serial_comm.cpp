@@ -5,7 +5,7 @@ Serial.setTimeout(0); // TODO: not valid, we should just wrap this stuff up in a
 
 void communication::_sendSample(std::array<uint8_t, 64> &tx_data)
 {
-    Serial.write(tx_data.data(), 64);
+    Serial.write(tx_data.data(), 64); // TODO: append newline? The output won't be great in the Arduino IDE anyway...
     Serial.send_now();
 }
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
