@@ -1,7 +1,7 @@
 #include <array>
 #include "communication.hpp"
 
-Serial.setTimeout(0);
+Serial.setTimeout(0); // TODO: not valid, we should just wrap this stuff up in a class
 
 void communication::_sendSample(std::array<uint8_t, 64> &tx_data)
 {
