@@ -6,3 +6,6 @@ Notes:
  - Get local versions of all the req libs; we want to be independent of build systems
  - Assume all incoming communication is big-endian, and send all outgoing communication as big-endian. 
    - Note that the teensy is little-endian.
+ - If a unit needs to maintain a state, it's implemented as a `struct`/`class`. Otherwise, we use a namespace.
+   - analog, calibration, communication, constants, packing (TODO: finish) are examples of namespaces.
+   - multiplexer and settings use structs (multiplexer cares about the current selection).

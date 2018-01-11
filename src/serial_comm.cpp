@@ -35,5 +35,9 @@ int communication::receiveData(std::array<uint8_t, 64> &rx_data)
 {
     int n = 0;
     n = Serial.readBytes(rx_data.data(), 64);
-    return 0;
+    if (n < 64)
+    {
+        return 0; // not enough data received--we want the full packet
+    }
+    return n;
 }
