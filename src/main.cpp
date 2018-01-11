@@ -1,21 +1,24 @@
 #include "constants.hpp"
 #include "settings.hpp"
-#include "i2c_t3.h"
 #include "analog.hpp"
 #include "communication.hpp"
 
-std::array<uint8_t, 64> buffer_rx;      // uint8_t == "byte"
-std::array<uint8_t, 64> buffer_tx;      // transfer buffer
-int err_code = 0;                       /// HID communication status
-bool is_sampling = false;               /// false is settings, true is sampling
-Settings settings(100, false, false);   // default to 100 hz, "raw" mode, verbosity off
-std::array<uint16_t, 20> recent_values; /// mildly strong assumption that we're always reading 16-bit ints
-std::array<float, 15> converted_recent_values;
+#ifndef NOHARDWARE
+#include "i2c_t3.h"
+#endif
 
-elapsedMillis adc_data_timestamp;
-unsigned long timestamp = 0;
-elapsedMicros between_adc_readings_timer;
-int deviation = 0;
+std::array<uint8_t, 64> buffer_rx;             // uint8_t == "byte"
+std::array<uint8_t, 64> buffer_tx;             // transfer buffer
+int err_code = 0;                              /// HID communication status
+bool is_sampling = false;                      /// false is settings, true is sampling
+Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
+std::array<uint16_t, 20> recent_values;        /// mildly strong assumption that we're always reading 16-bit ints
+std::array<float, 15> converted_recent_values; /// X, Y, Z forces that have been fed through applyRotation
+
+elapsedMillis adc_data_timestamp;         /// Time at the start of acquisition of a given sample, in ms
+unsigned long timestamp = 0;              /// Stores the result of adc_data_timestamp (which runs away)
+elapsedMicros between_adc_readings_timer; /// Used to time consecutive calls to readAllOnce
+int deviation = 0;                        /// deviation from the expected sampling period, in us
 
 void setup()
 {

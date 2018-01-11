@@ -9,3 +9,5 @@ Notes:
  - If a unit needs to maintain a state, it's implemented as a `struct`/`class`. Otherwise, we use a namespace.
    - analog, calibration, communication, constants, packing (TODO: finish) are examples of namespaces.
    - multiplexer and settings use structs (multiplexer cares about the current selection).
+ - Compiler flags to turn toggle HID/Serial communication, hardware support
+ 

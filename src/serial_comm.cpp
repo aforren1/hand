@@ -4,7 +4,7 @@
 void communication::initComm()
 {
     Serial.begin(9600);
-    Serial.setTimeout(0);
+    Serial.setTimeout(0); // return immediately (match HID)
 }
 void communication::sendData(std::array<uint8_t, 64> &tx_data)
 {
