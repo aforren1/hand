@@ -21,7 +21,7 @@ int calibration::calibrateAllChannels(PGASettings &pga_settings)
     }
 }
 
-int calibration::calibrateChannel(unsigned char channel, std::array<float, 6> &gain_vec)
+int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_vec)
 // 0th index is front gain, 1st index is fine gain, 2nd index is output gain, 3rd is product (not used here)
 {
     std::array<float, ccalib::n_adc_readings> adc_readings;

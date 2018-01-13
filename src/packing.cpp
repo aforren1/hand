@@ -6,14 +6,14 @@
 #include "packing.hpp"
 
 template <class T>
-void num2bigendbytes(T num, std::array<unsigned char, sizeof(T)> &b)
+void num2bigendbytes(T num, std::array<uint8_t, sizeof(T)> &b)
 {
     memcpy(b.data(), &num, sizeof(T));
     std::reverse(std::begin(b), std::end(b));
 }
 
 template <class T>
-T bigendbytes2num(std::array<unsigned char, sizeof(T)> &b)
+T bigendbytes2num(std::array<uint8_t, sizeof(T)> &b)
 {
     T num;
     std::reverse(std::begin(b), std::end(b));
@@ -21,14 +21,14 @@ T bigendbytes2num(std::array<unsigned char, sizeof(T)> &b)
     return num;
 }
 
-extern template void packing::num2bigendbytes<int>(int num, std::array<unsigned char, sizeof(int)> &b);
-extern template void packing::num2bigendbytes<unsigned int>(unsigned int num, std::array<unsigned char, sizeof(unsigned int)> &b);
-extern template void packing::num2bigendbytes<long>(long num, std::array<unsigned char, sizeof(long)> &b);
-extern template void packing::num2bigendbytes<unsigned long>(unsigned long num, std::array<unsigned char, sizeof(unsigned long)> &b);
-extern template void packing::num2bigendbytes<float>(float num, std::array<unsigned char, sizeof(float)> &b);
+extern template void packing::num2bigendbytes<int>(int num, std::array<uint8_t, sizeof(int)> &b);
+extern template void packing::num2bigendbytes<unsigned int>(unsigned int num, std::array<uint8_t, sizeof(unsigned int)> &b);
+extern template void packing::num2bigendbytes<long>(long num, std::array<uint8_t, sizeof(long)> &b);
+extern template void packing::num2bigendbytes<unsigned long>(unsigned long num, std::array<uint8_t, sizeof(unsigned long)> &b);
+extern template void packing::num2bigendbytes<float>(float num, std::array<uint8_t, sizeof(float)> &b);
 
-extern template int packing::bigendbytes2num(std::array<unsigned char, sizeof(int)> &b);
-extern template unsigned int packing::bigendbytes2num(std::array<unsigned char, sizeof(unsigned int)> &b);
-extern template long packing::bigendbytes2num(std::array<unsigned char, sizeof(long)> &b);
-extern template unsigned long packing::bigendbytes2num(std::array<unsigned char, sizeof(unsigned long)> &b);
-extern template float packing::bigendbytes2num(std::array<unsigned char, sizeof(float)> &b);
+extern template int packing::bigendbytes2num(std::array<uint8_t, sizeof(int)> &b);
+extern template unsigned int packing::bigendbytes2num(std::array<uint8_t, sizeof(unsigned int)> &b);
+extern template long packing::bigendbytes2num(std::array<uint8_t, sizeof(long)> &b);
+extern template unsigned long packing::bigendbytes2num(std::array<uint8_t, sizeof(unsigned long)> &b);
+extern template float packing::bigendbytes2num(std::array<uint8_t, sizeof(float)> &b);
