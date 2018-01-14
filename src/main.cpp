@@ -1,7 +1,10 @@
+#include <array>
+
 #include "constants.hpp"
 #include "settings.hpp"
 #include "analog.hpp"
 #include "communication.hpp"
+#include "ui.hpp"
 
 #ifndef NOHARDWARE
 #include "i2c_t3.h"
@@ -71,11 +74,11 @@ void loop()
     err_code = communication::receiveData(buffer_rx); // Check for any new messages from host
     if (err_code > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
-        handleInput(is_sampling, buffer_rx, settings);
+        ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }
 
     if (is_sampling)
     {
-        // busy wait until the remained of the period has elapsed
+        // busy wait until the remainder of the period has elapsed
     }
 }

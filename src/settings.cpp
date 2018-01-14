@@ -167,6 +167,6 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
     { // set one of the components, so recompute the product
         gains_and_offsets[finger][channel][3] = gains_and_offsets[finger][channel][0] *
                                     gains_and_offsets[finger][channel][1] *
-                                    gains_[finger][channel][2];
+                                    gains_and_offsets[finger][channel][2];
     }
 }
