@@ -10,8 +10,9 @@
 #include "i2c_t3.h"
 #endif
 
-std::array<uint8_t, 64> buffer_rx;             // uint8_t == "byte"
-std::array<uint8_t, 64> buffer_tx;             // transfer buffer
+std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
+std::array<uint8_t, 64> buffer_tx; // transfer buffer
+
 int err_code = 0;                              /// HID communication status
 bool is_sampling = false;                      /// false is settings, true is sampling
 Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
@@ -19,9 +20,9 @@ std::array<uint16_t, 20> recent_values;        /// mildly strong assumption that
 std::array<float, 15> converted_recent_values; /// X, Y, Z forces that have been fed through applyRotation
 
 elapsedMillis adc_data_timestamp;         /// Time at the start of acquisition of a given sample, in ms
-unsigned long timestamp = 0;              /// Stores the result of adc_data_timestamp (which runs away)
+uint32_t timestamp = 0;                   /// Stores the result of adc_data_timestamp (which runs away)
 elapsedMicros between_adc_readings_timer; /// Used to time consecutive calls to readAllOnce
-int deviation = 0;                        /// deviation from the expected sampling period, in us
+int16_t deviation = 0;                    /// deviation from the expected sampling period, in us
 
 void setup()
 {
@@ -37,6 +38,7 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(constants::pin::led_for_calibration, LOW);
     digitalWrite(constants::pin::led_for_adc, LOW);
+    analog::setupADC();
 
 #ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
@@ -45,9 +47,10 @@ void setup()
 // setup multiplexer
 // run calibration
 #endif
-    analog::setupADC();
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
+    buffer_rx.fill(0); // initialize transfer and receive buffers
+    buffer_tx.fill(0);
 }
 
 void loop()
@@ -55,7 +58,7 @@ void loop()
     if (is_sampling)
     {
         // take single read of all channels
-        // get timestamp here
+        timestamp = adc_data_timestamp;
         analog::readAllOnce(recent_values);
 
         if (settings.getGameMode())
@@ -80,5 +83,10 @@ void loop()
     if (is_sampling)
     {
         // busy wait until the remainder of the period has elapsed
+        while (between_adc_readings_timer < settings.sampling_period_us)
+        {
+        }
+        deviation = between_adc_readings_timer - settings.sampling_period_us;
+        between_adc_readings_timer = 0;
     }
 }
