@@ -10,4 +10,5 @@ Notes:
    - analog, calibration, communication, constants, packing (TODO: finish) are examples of namespaces.
    - multiplexer and settings use structs (multiplexer cares about the current selection).
  - Compiler flags to turn toggle HID/Serial communication, hardware support
+ - Note that `int` == `short` on Arduino, and there's some room for ambiguity there (the C++ linter seems to be interpreting `int` as having 32 bits). Should we just use `int16_t` and co?
  
