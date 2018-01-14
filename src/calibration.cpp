@@ -9,8 +9,6 @@ namespace cpin = constants::pin;
 namespace ccalib = constants::calibration;
 
 int calibration::calibrateAllChannels(PGASettings &pga_settings)
-// should num_channels always be 20? If I understand, the
-// current code only calibrates one sensor??
 {
     for (int i = 0; i < 5; i++)
     {

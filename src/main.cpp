@@ -4,6 +4,7 @@
 #include "settings.hpp"
 #include "analog.hpp"
 #include "communication.hpp"
+#include "calibration.hpp"
 #include "ui.hpp"
 
 #ifndef NOHARDWARE
@@ -46,6 +47,7 @@ void setup()
 // setup PGA
 // setup multiplexer
 // run calibration
+calibration::calibrateAllChannels(settings.pga_settings);
 #endif
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
