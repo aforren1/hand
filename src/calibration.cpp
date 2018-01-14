@@ -28,7 +28,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
     // coarse adjustments first
     for (int iter = 0; iter < ccalib::max_iter; iter++)
     {
-        for (size_t i = 0; i < adc_readings.size(); ++i)
+        for (std::size_t i = 0; i < adc_readings.size(); ++i)
         {
             adc_readings[i] = analog::readChannelMillivolt(channel);
         }
@@ -99,7 +99,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
             multiplier = 5;
         }
         // ripped from earlier
-        for (size_t i = 0; i < adc_readings.size(); ++i)
+        for (std::size_t i = 0; i < adc_readings.size(); ++i)
         {
             adc_readings[i] = analog::readChannelMillivolt(channel);
         }

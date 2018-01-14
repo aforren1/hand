@@ -1,5 +1,7 @@
 #include <array>
+#include <algorithm>
 #include "communication.hpp"
+#include "packing.hpp"
 
 void communication::initComm() {}
 
@@ -15,6 +17,15 @@ void communication::sendSample(const std::array<float, 15> &game_sample, std::ar
 
 void communication::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
+    std::array<uint8_t, 4> flt_container;
+    unsigned int count = 0;
+    for (auto i : game_sample)
+    {
+        packing::num2bigendbytes<float>(i, flt_container);
+        std::copy_n(flt_container.begin(), flt_container.size(), tx_data.begin() + count);
+        count += 4;
+    }
+    // at this point, tx_data should have 60 bytes filled
 }
 
 void communication::sendSample(unsigned long timestamp, int deviation, std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
@@ -23,8 +34,22 @@ void communication::sendSample(unsigned long timestamp, int deviation, std::arra
     communication::sendData(tx_data);
 }
 
-void communication::packRawSample(unsigned long timestamp, int deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &packed_sample)
+void communication::packRawSample(unsigned long timestamp, int deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
 {
+    std::array<uint8_t, 4> long_container;
+    std::array<uint8_t, 2> int_container;
+    packing::num2bigendbytes<unsigned long>(timestamp, long_container);
+    packing::num2bigendbytes<short>(deviation, int_container);
+    std::copy_n(long_container.begin(), long_container.size(), tx_data.begin());
+    std::copy_n(int_container.begin(), int_container.size(), tx_data.begin() + 4);
+    unsigned int count = 6;
+    for (auto i : raw_sample)
+    {
+        packing::num2bigendbytes<unsigned short>(i, int_container);
+        std::copy_n(int_container.begin(), int_container.size(), tx_data.begin() + count);
+        count += 2;
+    }
+    // should have 46 bytes filled by now
 }
 
 int communication::receiveData(std::array<uint8_t, 64> &rx_data)
