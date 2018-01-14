@@ -1,9 +1,9 @@
 #ifndef CONSTANTS_H
 #define CONSTANTS_H
 
-#include <ADC.h>
 #include <cmath>
 #include <array>
+#include "ADC.h"
 
 namespace constants
 {
@@ -39,9 +39,9 @@ const unsigned int max_iter = 1;          /// maximum iterations in optimization
 const unsigned int max_fine_iter = 10;    /// Maximum iterations of fine step
 const unsigned int n_adc_readings = 1000; /// number of ADC readings to average over
 const float target_fraction = 0.5;        /// Trying to land between 0 and 1?
-const float vcc = 3.33; /// Matching Jacob here, but should it be 3.3?
+const float vcc = 3.33;                   /// Matching Jacob here, but should it be 3.3?
 const float mvcc = vcc * 1000;
-const float tol_mv = 20;  /// Used for fine adjustments
+const float tol_mv = 20; /// Used for fine adjustments
 };
 
 namespace multiplex
