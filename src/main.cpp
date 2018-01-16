@@ -44,10 +44,10 @@ void setup()
 #ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
     Wire2.setDefaultTimeout(200000);
-// setup PGA
-// setup multiplexer
-// run calibration
-calibration::calibrateAllChannels(settings.pga_settings);
+    // setup PGA
+    // setup multiplexer
+    // run calibration
+    calibration::calibrateAllChannels(settings.pga_settings);
 #endif
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
@@ -64,8 +64,8 @@ void loop()
         analog::readAllOnce(recent_values);
 
         if (settings.getGameMode())
-        { // if in "game" mode, perform rotation and send data
-            analog::applyRotation(recent_values, converted_recent_values);
+        {                                                                  // if in "game" mode, perform rotation and send data
+            analog::applyRotation(recent_values, converted_recent_values); // TODO: move applyRotation somewhere more appropriate
             communication::sendSample(converted_recent_values, buffer_tx);
         }
         else
