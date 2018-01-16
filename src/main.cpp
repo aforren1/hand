@@ -40,7 +40,7 @@ void setup()
     analog::setupADC();
 
 #ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)
-    MultiPGA mutli_pga(settings.pga_settings);
+    MultiPGA multi_pga(settings.pga_settings);
     calibration::calibrateAllChannels(settings.pga_settings);
 #endif
     adc_data_timestamp = 0;
