@@ -9,6 +9,7 @@ namespace constants
 {
 namespace pin
 {
+const uint8_t n_channels = 20;
 const std::array<unsigned int, 20> sensor_pins = {A12, A13, A16, A14, A17,
                                                   A18, A19, A20, A21, A22,
                                                   A0, A1, A5, A4, A3,

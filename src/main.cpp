@@ -4,12 +4,10 @@
 #include "settings.hpp"
 #include "analog.hpp"
 #include "communication.hpp"
+#include "multipga.hpp"
 #include "calibration.hpp"
 #include "ui.hpp"
 
-#ifndef NOHARDWARE
-#include "i2c_t3.h"
-#endif
 
 std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 std::array<uint8_t, 64> buffer_tx; // transfer buffer
@@ -42,11 +40,7 @@ void setup()
     analog::setupADC();
 
 #ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)
-    Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
-    Wire2.setDefaultTimeout(200000);
-    // setup PGA
-    // setup multiplexer
-    // run calibration
+    MultiPGA mutli_pga(settings.pga_settings);
     calibration::calibrateAllChannels(settings.pga_settings);
 #endif
     adc_data_timestamp = 0;
