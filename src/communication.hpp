@@ -1,7 +1,6 @@
 #ifndef COMM_H
 #define COMM_H
 #include <array>
-#include "constants.hpp"
 
 namespace communication
 {

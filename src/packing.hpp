@@ -15,14 +15,14 @@ template <class T>
 T bigendbytes2num(std::array<uint8_t, sizeof(T)> &b);
 
 template <class T>
-void packing::num2bigendbytes(T num, std::array<uint8_t, sizeof(T)> &b)
+void num2bigendbytes(T num, std::array<uint8_t, sizeof(T)> &b)
 {
     memcpy(b.data(), &num, sizeof(T));
     std::reverse(std::begin(b), std::end(b));
 }
 
 template <class T>
-T packing::bigendbytes2num(std::array<uint8_t, sizeof(T)> &b)
+T bigendbytes2num(std::array<uint8_t, sizeof(T)> &b)
 {
     T num;
     std::reverse(std::begin(b), std::end(b));
