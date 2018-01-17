@@ -1,5 +1,4 @@
 #include <array>
-
 #include "constants.hpp"
 #include "settings.hpp"
 #include "analog.hpp"
@@ -37,6 +36,7 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(constants::pin::led_for_calibration, LOW);
     digitalWrite(constants::pin::led_for_adc, LOW);
+    communication::initComm();
     analog::setupADC();
 
 #ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)

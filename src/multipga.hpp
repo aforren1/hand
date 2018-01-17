@@ -20,7 +20,7 @@ struct MultiPGA {
     void accessRegister(uint8_t addr, bool is_read);
     void readPGA(uint8_t addr);
 
-}
+};
 
 
 #endif
