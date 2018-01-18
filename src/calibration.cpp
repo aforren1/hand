@@ -17,6 +17,7 @@ int calibration::calibrateAllChannels(PGASettings &pga_settings)
             calibration::calibrateChannel(cpin::sensor_pins_nested[i][j], pga_settings.gains_and_offsets[i][j]);
         }
     }
+    return 0;
 }
 
 int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_vec)
