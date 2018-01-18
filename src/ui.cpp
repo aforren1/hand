@@ -54,7 +54,6 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 float val = packing::bigendbytes2num<float>(flt_container);
                 int res = settings.setGain(finger, channel, slot, val);
             }
-
         }
         else if (buffer_rx[0] == 'g') // get
         {
@@ -63,7 +62,6 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 float freq = settings.getSamplingFrequency();
                 // pack & send packet (prepend i for info?)
             }
-
         }
         else if (buffer_rx[0] == 'a') // change to acquire mode
         {
@@ -80,7 +78,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                     }
                 }
             }
-            // calibration::calibrateAllChannels(settings.pga_settings); 
+            // calibration::calibrateAllChannels(settings.pga_settings);
             is_sampling = true;
         }
     }

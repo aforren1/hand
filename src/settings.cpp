@@ -105,12 +105,12 @@ PGASettings::PGASettings()
     for (int i = 0; i < 5; i++)
     { // iterate over fingers
         for (int j = 0; j < 4; j++)
-        {                            // over channels
-            gains_and_offsets[i][j][0] = 32;     // front gain
-            gains_and_offsets[i][j][1] = 1;      // fine gain
-            gains_and_offsets[i][j][2] = 9;      // output gain
-            gains_and_offsets[i][j][3] = 32 * 9; // product
-            gains_and_offsets[i][j][4] = 0; // coarse offset (TODO: fix)
+        {                                                                     // over channels
+            gains_and_offsets[i][j][0] = 32;                                  // front gain
+            gains_and_offsets[i][j][1] = 1;                                   // fine gain
+            gains_and_offsets[i][j][2] = 9;                                   // output gain
+            gains_and_offsets[i][j][3] = 32 * 9;                              // product
+            gains_and_offsets[i][j][4] = 0;                                   // coarse offset (TODO: fix)
             gains_and_offsets[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
@@ -166,7 +166,7 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
     else
     { // set one of the components, so recompute the product
         gains_and_offsets[finger][channel][3] = gains_and_offsets[finger][channel][0] *
-                                    gains_and_offsets[finger][channel][1] *
-                                    gains_and_offsets[finger][channel][2];
+                                                gains_and_offsets[finger][channel][1] *
+                                                gains_and_offsets[finger][channel][2];
     }
 }
