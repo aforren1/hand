@@ -3,6 +3,6 @@
 .vscode/browse.vc.db*
 .vscode/
 .vscode
-doc/*/
+docs/
 .vscode/c_cpp_properties.json
 .vscode/launch.json
