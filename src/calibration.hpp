@@ -2,6 +2,7 @@
 #define CALIB_H
 
 #include "settings.hpp"
+#include <array>
 
 namespace calibration {
     /**
