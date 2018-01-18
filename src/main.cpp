@@ -8,20 +8,20 @@
 #include "calibration.hpp"
 #include "ui.hpp"
 
-
+// "global" things
 std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 std::array<uint8_t, 64> buffer_tx; // transfer buffer
 
-int err_code = 0;                              /// HID communication status
-bool is_sampling = false;                      /// false is settings, true is sampling
+uint8_t hid_status = 0;                            ///< HID communication status
+bool is_sampling = false;                      ///< false is settings, true is sampling
 Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
-std::array<uint16_t, 20> recent_values;        /// mildly strong assumption that we're always reading 16-bit ints
-std::array<float, 15> converted_recent_values; /// X, Y, Z forces that have been fed through applyRotation
+std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
+std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through applyRotation
 
-elapsedMillis adc_data_timestamp;         /// Time at the start of acquisition of a given sample, in ms
-uint32_t timestamp = 0;                   /// Stores the result of adc_data_timestamp (which runs away)
-elapsedMicros between_adc_readings_timer; /// Used to time consecutive calls to readAllOnce
-int16_t deviation = 0;                    /// deviation from the expected sampling period, in us
+elapsedMillis adc_data_timestamp;         ///< Time at the start of acquisition of a given sample, in ms
+uint32_t timestamp = 0;                   ///< Stores the result of adc_data_timestamp (which runs away)
+elapsedMicros between_adc_readings_timer; ///< Used to time consecutive calls to readAllOnce
+int16_t deviation = 0;                    ///< deviation from the expected sampling period, in us
 
 void setup()
 {
@@ -37,10 +37,10 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(constants::pin::led_for_calibration, LOW);
     digitalWrite(constants::pin::led_for_adc, LOW);
-    communication::initComm();
+    communication::initComm(); // Only does something if Serial is being used (HID needs no init)
     analog::setupADC();
 
-#ifndef NOHARDWARE /// disable communication via I2C (allows us to develop without the full device)
+#ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
     MultiPGA multi_pga(settings.pga_settings);
     calibration::calibrateAllChannels(settings.pga_settings);
 #endif
@@ -71,8 +71,8 @@ void loop()
     // check for data *after* read, so the time it takes to do that
     // is folded into the busy wait
     // if there is a new message, our timing will be borked anyway
-    err_code = communication::receiveData(buffer_rx); // Check for any new messages from host
-    if (err_code > 0)                                 // Deal with parsing apart the message and evaluate state changes
+    hid_status = communication::receiveData(buffer_rx); // Check for any new messages from host
+    if (hid_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
         ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }

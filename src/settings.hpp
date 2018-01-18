@@ -18,10 +18,10 @@ struct Settings
     float sampling_frequency_hz;
     float sampling_period_s;
     unsigned long sampling_period_us; // sampling_period_s * 1000000
-    bool game_mode;                   /// Whether to precompute the x,y,z per finger
-    bool verbosity;                   /// Whether to push messages during calibration, etc.
-    PGASettings pga_settings;       /// Manages the op-amp settings
-    PGASettings pga_settings_copy;  /// Copy of the settings, used to infer which channels to recalibrate
+    bool game_mode;                   ///< Whether to precompute the x,y,z per finger
+    bool verbosity;                   ///< Whether to push messages during calibration, etc.
+    PGASettings pga_settings;       ///< Manages the op-amp settings
+    PGASettings pga_settings_copy;  ///< Copy of the settings, used to infer which channels to recalibrate
     // TODO: add ADC averaging, resolution to settings?
 
     Settings(float, bool, bool); // sampling frequency in hz, game mode, and verbosity
