@@ -1,4 +1,4 @@
-#include <Arduino.h>
+#include <Arduino.h> // necessary for RawHID invocations
 #undef min
 #undef max
 #include "packing.hpp"

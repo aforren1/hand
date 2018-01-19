@@ -7,8 +7,8 @@ struct PGASettings
 {
     // first dim is finger, second is slot, 3rd is value (front gain, fine gain, output gain, coarse offset, fine offset)
     std::array<std::array<std::array<float, 6>, 4>, 5> gains_and_offsets; ///< 5*4*6 nested array of floats. First dim is finger, second is channel, third is slot.
-    std::array<float, 6> lower_bounds; ///< Lower bounds for the gain and offset settings.
-    std::array<float, 6> upper_bounds; ///< Upper bounds for the gain and offset settings.
+    std::array<float, 6> lower_bounds;                                    ///< Lower bounds for the gain and offset settings.
+    std::array<float, 6> upper_bounds;                                    ///< Upper bounds for the gain and offset settings.
     /**
      * @brief constructor for the PGASettings class.
      * 
@@ -22,7 +22,7 @@ struct PGASettings
      * @note If the product has been updated, then all other gain settings will be updated.
      *       If one of the other gain settings has been updated (e.g. the fine gain), the product will be recalculated.
      */
-    void updateProduct(int finger, int channel, int slot);
+    void updateProduct(int16_t finger, int16_t channel, int16_t slot);
 };
 
 struct Settings
@@ -96,7 +96,7 @@ struct Settings
      * 
      * @todo In verbose mode, should we shout if someone tries to set the individual channel gain?
      */
-    int setGain(int finger, int channel, int slot, float value);
+    int setGain(int16_t finger, int16_t channel, int16_t slot, float value);
     /**
      * @brief get the gain setting for a particular finger, channel, and slot.
      * 
@@ -104,7 +104,7 @@ struct Settings
      * 
      * @note Usage would be something like gain = settings.getGain(2, 0, 3) for the middle finger, first channel, and product of gains.
      */
-    float getGain(int, int, int);
+    float getGain(int16_t finger, int16_t channel, int16_t slot);
 };
 
 #endif

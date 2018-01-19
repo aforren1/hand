@@ -45,11 +45,11 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 std::array<uint8_t, 2> int_container;
                 std::array<uint8_t, 4> flt_container;
                 std::copy_n(buffer_rx.begin() + 2, 2, int_container.begin());
-                uint16_t finger = packing::bigendbytes2num<uint16_t>(int_container);
+                int16_t finger = packing::bigendbytes2num<int16_t>(int_container);
                 std::copy_n(buffer_rx.begin() + 4, 2, int_container.begin());
-                uint16_t channel = packing::bigendbytes2num<uint16_t>(int_container);
+                int16_t channel = packing::bigendbytes2num<int16_t>(int_container);
                 std::copy_n(buffer_rx.begin() + 6, 2, int_container.begin());
-                uint16_t slot = packing::bigendbytes2num<uint16_t>(int_container);
+                int16_t slot = packing::bigendbytes2num<int16_t>(int_container);
                 std::copy_n(buffer_rx.begin() + 8, 4, flt_container.begin());
                 float val = packing::bigendbytes2num<float>(flt_container);
                 int res = settings.setGain(finger, channel, slot, val);
@@ -61,6 +61,26 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             {
                 float freq = settings.getSamplingFrequency();
                 // pack & send packet (prepend i for info?)
+            }
+            else if (buffer_rx[1] == 'm')
+            {
+                bool mode = settings.getGameMode();
+                // TODO: Send result
+            }
+            else if (buffer_rx[1] == 'v')
+            {
+                bool verbosity = settings.getVerbosity();
+            }
+            else if (buffer_rx[1] == 'g')
+            {
+                std::array<uint8_t, 2> int_container;
+                std::copy_n(buffer_rx.begin() + 2, 2, int_container.begin());
+                int16_t finger = packing::bigendbytes2num<int16_t>(int_container);
+                std::copy_n(buffer_rx.begin() + 4, 2, int_container.begin());
+                int16_t channel = packing::bigendbytes2num<int16_t>(int_container);
+                std::copy_n(buffer_rx.begin() + 6, 2, int_container.begin());
+                int16_t slot = packing::bigendbytes2num<int16_t>(int_container);
+                float gain = settings.getGain(finger, channel, slot);
             }
         }
         else if (buffer_rx[0] == 'a') // change to acquire mode

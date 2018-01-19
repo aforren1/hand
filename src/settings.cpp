@@ -47,7 +47,7 @@ bool Settings::getVerbosity()
     return verbosity;
 }
 
-int Settings::setGain(int finger, int channel, int slot, float value)
+int Settings::setGain(int16_t finger, int16_t channel, int16_t slot, float value)
 {
     // check indexing
     if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || slot < 0 || slot > 3)
@@ -94,7 +94,7 @@ int Settings::setGain(int finger, int channel, int slot, float value)
     return 0;
 }
 
-float Settings::getGain(int finger, int channel, int slot)
+float Settings::getGain(int16_t finger, int16_t channel, int16_t slot)
 {
     return pga_settings.gains_and_offsets[finger][channel][slot];
 }
@@ -114,10 +114,10 @@ PGASettings::PGASettings()
         }
     }
     lower_bounds = {{0, 0, 0, 0, 0, 0}};
-    upper_bounds = {{128, 1, 100, 12800, 10, constants::calibration::mvcc}}; // TODO: Check these bounds
+    upper_bounds = {{128, 1, 9, 128 * 9, 0, constants::calibration::mvcc}}; // TODO: Check coarse offset bounds
 }
 
-void PGASettings::updateProduct(int finger, int channel, int slot)
+void PGASettings::updateProduct(int16_t finger, int16_t channel, int16_t slot)
 {
     if (slot == 3)
     { // set the product, so use lookup table to update other elements
@@ -160,8 +160,7 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
         }
         gains_and_offsets[finger][channel][0] = front_val;
         // restrict the fine gain to [0, 1]
-        float b = base_gain / front_val;
-        gains_and_offsets[finger][channel][1] = max(min(b, large_val), small_val); // note to future: ran into funky std::min/max here
+        gains_and_offsets[finger][channel][1] = max(min(base_gain / front_val, large_val), small_val); // note to future: ran into funky std::min/max here
     }
     else
     { // set one of the components, so recompute the product
