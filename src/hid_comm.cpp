@@ -1,3 +1,4 @@
+#include "Arduino.h"
 #include <array>
 #include <algorithm>
 #include "communication.hpp"
