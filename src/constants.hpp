@@ -5,6 +5,8 @@
 #include <array>
 #include <climits>
 #include "ADC.h"
+#undef min
+#undef max
 
 namespace constants
 {
