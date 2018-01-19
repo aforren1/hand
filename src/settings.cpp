@@ -16,7 +16,7 @@ int Settings::setSamplingFrequency(float sampling_frequency)
     }
     sampling_frequency_hz = sampling_frequency;
     sampling_period_s = 1 / sampling_frequency_hz;
-    sampling_period_us = sampling_period_s * 1000000;
+    sampling_period_us = sampling_period_s * 1000000; // note that any trailing decimals are removed at this point (casting to int rounds toward 0)
     return 0;
 }
 
@@ -113,8 +113,8 @@ PGASettings::PGASettings()
             gains_and_offsets[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
-    lower_bounds = {{0, 0, 0, 0, 0, 0}};
-    upper_bounds = {{128, 1, 100, 12800, 10, 1000}}; // really not sure about 100 and 12800 and trailing 10s
+    lower_bounds = {{0, 0, 0, 0, 0, 0}}; 
+    upper_bounds = {{128, 1, 100, 12800, 10, constants::calibration::mvcc}}; // TODO: Check these bounds
 }
 
 void PGASettings::updateProduct(int finger, int channel, int slot)
