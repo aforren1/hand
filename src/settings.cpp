@@ -10,7 +10,7 @@ Settings::Settings(float sampling_frequency, bool game, bool verbose)
 
 int Settings::setSamplingFrequency(float sampling_frequency)
 {
-    if (sampling_frequency > 1000 || sampling_frequency < 1)
+    if (sampling_frequency > 1000 || sampling_frequency <= 0) // current sampling frequency maxes out at 1kHz (hardware & communication restriction), and cannot be 0 or negative
     {
         return 1;
     }
@@ -159,9 +159,9 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
             front_val = 128;
         }
         gains_and_offsets[finger][channel][0] = front_val;
-        // restrict to [0, 1]
+        // restrict the fine gain to [0, 1]
         float b = base_gain/front_val;
-        gains_and_offsets[finger][channel][1] = max(min(b, large_val), small_val);
+        gains_and_offsets[finger][channel][1] = max(min(b, large_val), small_val); // note to future: ran into funky std::min/max here
     }
     else
     { // set one of the components, so recompute the product
