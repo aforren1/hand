@@ -1,8 +1,10 @@
-#include "Arduino.h"
+#include <Arduino.h>
+#undef min
+#undef max
+#include "packing.hpp"
 #include <array>
 #include <algorithm>
 #include "communication.hpp"
-#include "packing.hpp"
 
 void communication::initComm() {}
 
