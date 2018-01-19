@@ -88,7 +88,7 @@ struct Settings
      * @param slot takes values from [0, 3]. 0 is the front gain, 1 is the fine gain, 2 is the output gain, 3 is the product.
      * @param value is the proposed value for the slot
      * 
-     * @return 1 on failure, 0 on success.
+     * @return 1 on failure, 0 on success. Failure can either be due to indexing or violation of a boundary.
      * 
      * @note I really recommend *not* setting individual channels (and probably not individual fingers,
      *       though it's easier to imagine situations where that would be sensible).

@@ -1,3 +1,15 @@
+
+To use via PlatformIO:
+
+1. Install platformio-ide (via visual studio code or atom?)
+2. clone this directory (`git clone https://github.com/aforren1/hand`)
+3. Open the directory in the text editor of choice
+4. Hit Ctrl+Shift+P and find "PlatformIO: New Terminal"
+5. In that terminal, type `platformio init --board teensy35`
+6. To compile & link, `platformio run`
+7. To upload to the board, `platformio run --target upload`
+8. To clean up files (sometimes helps in development), `platformio run --target clean`
+
 Notes:
 
  - setters return an integer (0 on success, > 0 on failure).
