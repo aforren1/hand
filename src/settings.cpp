@@ -161,7 +161,10 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
         }
         gains_and_offsets[finger][channel][0] = front_val;
         // restrict to [0, 1]
-        gains_and_offsets[finger][channel][1] = std::min<float>(std::max<float>(base_gain / front_val, small_val), large_val);
+        float b = base_gain/front_val;
+        float maxval = (small_val < b) ? b : small_val;
+        float minval = (maxval < large_val) ? maxval : large_val;
+        gains_and_offsets[finger][channel][1] = minval;
     }
     else
     { // set one of the components, so recompute the product
