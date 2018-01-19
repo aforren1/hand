@@ -113,7 +113,7 @@ PGASettings::PGASettings()
             gains_and_offsets[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
-    lower_bounds = {{0, 0, 0, 0, 0, 0}}; 
+    lower_bounds = {{0, 0, 0, 0, 0, 0}};
     upper_bounds = {{128, 1, 100, 12800, 10, constants::calibration::mvcc}}; // TODO: Check these bounds
 }
 
@@ -160,7 +160,7 @@ void PGASettings::updateProduct(int finger, int channel, int slot)
         }
         gains_and_offsets[finger][channel][0] = front_val;
         // restrict the fine gain to [0, 1]
-        float b = base_gain/front_val;
+        float b = base_gain / front_val;
         gains_and_offsets[finger][channel][1] = max(min(b, large_val), small_val); // note to future: ran into funky std::min/max here
     }
     else

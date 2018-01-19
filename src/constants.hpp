@@ -3,6 +3,7 @@
 
 #include <cmath>
 #include <array>
+#include <climits>
 #include "ADC.h"
 
 namespace constants
@@ -30,7 +31,7 @@ const unsigned int resolution = 16; ///< ADC resolution (TODO: allow user to cha
 const unsigned int averaging = 16;  ///< Number of averaged samples *within* ADC
 const float cos_rot = cos(pi / 4.0);
 const float sin_rot = sin(pi / 4.0);
-const float max_int = 65535;
+const float max_int = USHRT_MAX;
 };
 
 namespace calibration
