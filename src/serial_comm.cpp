@@ -9,12 +9,13 @@ void communication::initComm()
 
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
-    for (auto i : game_sample)
+    for (const auto& i : game_sample)
     {
         Serial.print(i);
         Serial.print(' ');
     }
     Serial.print('\n');
+    Serial.send_now();
 }
 
 void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
@@ -23,12 +24,13 @@ void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array
     Serial.print(' ');
     Serial.print(deviation);
     Serial.print(' ');
-    for (auto i : raw_sample)
+    for (const auto& i : raw_sample)
     {
         Serial.print(i);
         Serial.print(' ');
     }
     Serial.print('\n');
+    Serial.send_now();
 }
 
 int communication::receiveData(std::array<uint8_t, 64> &rx_data)
