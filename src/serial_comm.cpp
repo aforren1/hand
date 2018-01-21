@@ -5,7 +5,6 @@
 void communication::initComm()
 {
     Serial.begin(9600);
-    Serial.setTimeout(0); // return immediately (match HID)
 }
 
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
