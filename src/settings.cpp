@@ -1,5 +1,6 @@
 #include "constants.hpp"
 #include "settings.hpp"
+#include <algorithm>
 
 Settings::Settings(float sampling_frequency, bool game, bool verbose)
 {
@@ -160,7 +161,7 @@ void PGASettings::updateProduct(int16_t finger, int16_t channel, int16_t slot)
         }
         gains_and_offsets[finger][channel][0] = front_val;
         // restrict the fine gain to [0, 1]
-        gains_and_offsets[finger][channel][1] = max(min(base_gain / front_val, large_val), small_val); // note to future: ran into funky std::min/max here
+        gains_and_offsets[finger][channel][1] = std::max(std::min(base_gain / front_val, large_val), small_val); // note to future: ran into funky std::min/max here
     }
     else
     { // set one of the components, so recompute the product
