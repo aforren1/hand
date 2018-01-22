@@ -3,16 +3,21 @@
 #include "constants.hpp"
 #include "settings.hpp"
 #include "analog.hpp"
-#include "communication.hpp"
 #include "multipga.hpp"
 #include "calibration.hpp"
 #include "ui.hpp"
+
+#ifdef USB_RAWHID
+#include "hid_comm.hpp"
+#else
+#include "serial_comm.hpp"
+#endif
 
 // "global" things
 std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 std::array<uint8_t, 64> buffer_tx; // transfer buffer
 
-uint8_t hid_status = 0;                        ///< HID communication status
+uint8_t comm_status = 0;                        ///< HID communication status
 bool is_sampling = false;                      ///< false is settings, true is sampling
 Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
 std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
@@ -71,8 +76,8 @@ void loop()
     // check for data *after* read, so the time it takes to do that
     // is folded into the busy wait
     // if there is a new message, our timing will be borked anyway
-    hid_status = communication::receiveData(buffer_rx); // Check for any new messages from host
-    if (hid_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
+    comm_status = communication::receiveData(buffer_rx); // Check for any new messages from host
+    if (comm_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
         ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }

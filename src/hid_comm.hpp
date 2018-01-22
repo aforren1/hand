@@ -14,14 +14,6 @@ namespace communication
 void initComm();
 
 /**
- * @brief Send data to the host.
- * 
- * @param tx_data is a reference to a std::array of type uint8_t and length 64, which is the entire USB packet.
- * @return void
- */
-void sendData(std::array<uint8_t, 64> &tx_data);
-
-/**
  * @brief Stores the game sample as a series of bytes (uint8_t) for transfer to the host.
  * 
  * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::applyRotation)

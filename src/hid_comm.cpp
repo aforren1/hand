@@ -4,14 +4,9 @@
 #include "packing.hpp"
 #include <array>
 #include <algorithm>
-#include "communication.hpp"
+#include "hid_comm.hpp"
 
 void communication::initComm() {}
-
-void communication::sendData(std::array<uint8_t, 64> &tx_data)
-{
-    RawHID.send(tx_data.data(), 1); //TODO: set to 0?
-}
 
 void communication::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
@@ -29,7 +24,7 @@ void communication::packGameSample(const std::array<float, 15> &game_sample, std
 void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
     communication::packGameSample(game_sample, tx_data);
-    communication::sendData(tx_data);
+    RawHID.send(tx_data.data(), 1);
 }
 
 void communication::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
@@ -53,7 +48,7 @@ void communication::packRawSample(uint32_t timestamp, int16_t deviation, const s
 void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
 {
     communication::packRawSample(timestamp, deviation, raw_sample, tx_data);
-    communication::sendData(tx_data);
+    RawHID.send(tx_data.data(), 1);
 }
 
 int communication::receiveData(std::array<uint8_t, 64> &rx_data)

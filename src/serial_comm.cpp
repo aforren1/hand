@@ -1,6 +1,6 @@
 #include "Arduino.h"
 #include <array>
-#include "communication.hpp"
+#include "serial_comm.hpp"
 
 void communication::initComm()
 {
