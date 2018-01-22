@@ -21,7 +21,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             if (buffer_rx[1] == 'f') // sampling frequency
             {
                 std::array<uint8_t, 4> flt_container;
-                std::copy_n(buffer_rx.begin() + 2, 4, flt_container.begin());
+                std::copy_n(buffer_rx.begin() + 3, 4, flt_container.begin());
                 float freq = packing::bigendbytes2num<float>(flt_container);
                 int res = settings.setSamplingFrequency(freq);
                 // store res as last error
@@ -46,7 +46,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 int8_t finger = buffer_rx[2];
                 int8_t channel = buffer_rx[3];
                 int8_t slot = buffer_rx[4];
-                std::copy_n(buffer_rx.begin() + 5, 4, flt_container.begin());
+                std::copy_n(buffer_rx.begin() + 6, 4, flt_container.begin());
                 float val = packing::bigendbytes2num<float>(flt_container);
                 int res = settings.setGain(finger, channel, slot, val);
             }
