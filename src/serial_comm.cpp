@@ -36,7 +36,7 @@ void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array
 int communication::receiveData(std::array<uint8_t, 64> &rx_data)
 {
     int n = 0;
-    n = Serial.readBytes((char *)rx_data.data(), 64);
+    n = Serial.readBytes((char *)rx_data.data(), 64); // TODO: might be bug in Teensy code?
     if (n < 64)
     {
         return 0; // not enough data received--we want the full packet
