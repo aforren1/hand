@@ -25,3 +25,14 @@ Notes:
  - Compiler flags to turn toggle HID/Serial communication, hardware support
  - Note that `int` == `short` on Arduino, and there's some room for ambiguity there (the C++ linter seems to be interpreting `int` as having 32 bits). Should we just use `int16_t` and co?
  - Generate docs via `doxygen Doxyfile` in the top-level directory.
+
+```python
+b'a' # change to acquire mode (sampling) (only from config mode)
+b'c' # change to config mode (no sampling) (only from acquire mode)
+# can only do the following in config mode:
+b'sf' + struct.pack('>f', 1000.0) # set the sampling frequency to 1000 Hz
+b'sm' + struct.pack('B', 1) # turn on game mode
+b'sg' + struct.pack('>bbbf', -1, -1, 3, 48.0) # set the product of gains across all fingers & channels to 48.0
+b'gg' + struct.pack('bbb', 0, 1, 2) # see how that changed the first finger, second channel, output gain
+
+```

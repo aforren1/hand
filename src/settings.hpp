@@ -22,7 +22,7 @@ struct PGASettings
      * @note If the product has been updated, then all other gain settings will be updated.
      *       If one of the other gain settings has been updated (e.g. the fine gain), the product will be recalculated.
      */
-    void updateProduct(int16_t finger, int16_t channel, int16_t slot);
+    void updateProduct(int8_t finger, int8_t channel, int8_t slot);
 };
 
 struct Settings
@@ -96,7 +96,7 @@ struct Settings
      * 
      * @todo In verbose mode, should we shout if someone tries to set the individual channel gain?
      */
-    int setGain(int16_t finger, int16_t channel, int16_t slot, float value);
+    int setGain(int8_t finger, int8_t channel, int8_t slot, float value);
     /**
      * @brief get the gain setting for a particular finger, channel, and slot.
      * 
@@ -104,7 +104,7 @@ struct Settings
      * 
      * @note Usage would be something like gain = settings.getGain(2, 0, 3) for the middle finger, first channel, and product of gains.
      */
-    float getGain(int16_t finger, int16_t channel, int16_t slot);
+    float getGain(int8_t finger, int8_t channel, int8_t slot);
 };
 
 #endif

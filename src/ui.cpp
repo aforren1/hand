@@ -16,7 +16,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
     }
     else // dealing with settings
     {
-        if (buffer_rx[0] == 's') // set
+        if (buffer_rx[0] == 'c') // config
         {
             if (buffer_rx[1] == 'f') // sampling frequency
             {
@@ -42,44 +42,36 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 // next 2 are the channel (-1 for all channels)
                 // next 2 are the slot (0 = front gain, 1 = fine, 2 = output, 3 = product)
                 // next 4 are the float value
-                std::array<uint8_t, 2> int_container;
                 std::array<uint8_t, 4> flt_container;
-                std::copy_n(buffer_rx.begin() + 2, 2, int_container.begin());
-                int16_t finger = packing::bigendbytes2num<int16_t>(int_container);
-                std::copy_n(buffer_rx.begin() + 4, 2, int_container.begin());
-                int16_t channel = packing::bigendbytes2num<int16_t>(int_container);
-                std::copy_n(buffer_rx.begin() + 6, 2, int_container.begin());
-                int16_t slot = packing::bigendbytes2num<int16_t>(int_container);
-                std::copy_n(buffer_rx.begin() + 8, 4, flt_container.begin());
+                int8_t finger = buffer_rx[2];
+                int8_t channel = buffer_rx[3];
+                int8_t slot = buffer_rx[4];
+                std::copy_n(buffer_rx.begin() + 5, 4, flt_container.begin());
                 float val = packing::bigendbytes2num<float>(flt_container);
                 int res = settings.setGain(finger, channel, slot, val);
             }
         }
         else if (buffer_rx[0] == 'g') // get
         {
-            if (buffer_rx[1] == 'f')
+            if (buffer_rx[1] == 'f') // sampling frequency
             {
                 float freq = settings.getSamplingFrequency();
                 // pack & send packet (prepend i for info?)
             }
-            else if (buffer_rx[1] == 'm')
+            else if (buffer_rx[1] == 'm') // game mode
             {
                 bool mode = settings.getGameMode();
                 // TODO: Send result
             }
-            else if (buffer_rx[1] == 'v')
+            else if (buffer_rx[1] == 'v') // verbosity
             {
                 bool verbosity = settings.getVerbosity();
             }
-            else if (buffer_rx[1] == 'g')
+            else if (buffer_rx[1] == 'g') // gain
             {
-                std::array<uint8_t, 2> int_container;
-                std::copy_n(buffer_rx.begin() + 2, 2, int_container.begin());
-                int16_t finger = packing::bigendbytes2num<int16_t>(int_container);
-                std::copy_n(buffer_rx.begin() + 4, 2, int_container.begin());
-                int16_t channel = packing::bigendbytes2num<int16_t>(int_container);
-                std::copy_n(buffer_rx.begin() + 6, 2, int_container.begin());
-                int16_t slot = packing::bigendbytes2num<int16_t>(int_container);
+                int8_t finger = buffer_rx[2];
+                int8_t channel = buffer_rx[3];
+                int8_t slot = buffer_rx[4];
                 float gain = settings.getGain(finger, channel, slot);
             }
         }

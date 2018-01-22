@@ -48,7 +48,7 @@ bool Settings::getVerbosity()
     return verbosity;
 }
 
-int Settings::setGain(int16_t finger, int16_t channel, int16_t slot, float value)
+int Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)
 {
     // check indexing
     if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || slot < 0 || slot > 3)
@@ -95,7 +95,7 @@ int Settings::setGain(int16_t finger, int16_t channel, int16_t slot, float value
     return 0;
 }
 
-float Settings::getGain(int16_t finger, int16_t channel, int16_t slot)
+float Settings::getGain(int8_t finger, int8_t channel, int8_t slot)
 {
     return pga_settings.gains_and_offsets[finger][channel][slot];
 }
@@ -118,7 +118,7 @@ PGASettings::PGASettings()
     upper_bounds = {{128, 1, 9, 128 * 9, 0, constants::calibration::mvcc}}; // TODO: Check coarse offset bounds
 }
 
-void PGASettings::updateProduct(int16_t finger, int16_t channel, int16_t slot)
+void PGASettings::updateProduct(int8_t finger, int8_t channel, int8_t slot)
 {
     if (slot == 3)
     { // set the product, so use lookup table to update other elements
