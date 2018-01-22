@@ -1,4 +1,5 @@
 #include <array>
+#include <algorithm>
 #include "ui.hpp"
 #include "settings.hpp"
 #include "calibration.hpp"
