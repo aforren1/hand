@@ -7,7 +7,7 @@
 #include "calibration.hpp"
 #include "ui.hpp"
 
-#ifdef USB_RAWHID
+#if USB_RAWHID
 #include "hid_comm.hpp"
 #else
 #include "serial_comm.hpp"
