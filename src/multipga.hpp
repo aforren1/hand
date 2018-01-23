@@ -19,8 +19,15 @@ struct MultiPGA {
     // originally from pga309.cpp
     void accessRegister(uint8_t addr, bool is_read);
     void readPGA(uint8_t addr);
+    uint16_t writePGA(uint8_t addr, float val1, float val2, float val3);
 
 };
 
-
+// helper functions
+uint16_t fineOffset2Hex(float fine_offset);
+uint16_t fineGain2Hex(float fine_gain);
+uint16_t gainsAndOffset2Hex(float des_fine_gain, float des_output_gain, float des_coarse_offset);
+uint8_t mapDesiredFrontToReal(float des_front_gain);
+uint8_t mapDesiredOutToReal(float des_output_gain);
+uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3);
 #endif

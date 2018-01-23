@@ -92,6 +92,18 @@ void MultiPGA::accessRegister(uint8_t addr, bool is_read)
     }
 }
 
+uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3)
+{
+    Wire2.beginTransmission(cplex::pga_addr);
+    Wire2.write(addr);
+    int16_t raw_2byte = writeSelect(addr, val1, val2, val3);
+    uint8_t write_array[2];
+    memcpy(&raw_2byte, write_array, 2);
+    Wire2.write(write_array, 2);
+    Wire2.endTransmission();
+    return raw_2byte;
+}
+
 void MultiPGA::readPGA(uint8_t addr)
 {
     uint8_t n_bytes = 0;
@@ -162,12 +174,18 @@ uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float d
     uint8_t output_gain = mapDesiredOutToReal(des_output_gain);
     uint8_t front_gain = mapDesiredFrontToReal(des_front_gain);
 
-    uint16_t result = owd; result = result << 3;
-    result |= output_gain; result = result << 1;
-    result |= gi3; result = result << 3;
-    result |= front_gain; result = result << 3;
-    result |= rfb; result = result << 1;
-    result |= os5; result = result << 4;
+    uint16_t result = owd;
+    result = result << 3;
+    result |= output_gain;
+    result = result << 1;
+    result |= gi3;
+    result = result << 3;
+    result |= front_gain;
+    result = result << 3;
+    result |= rfb;
+    result = result << 1;
+    result |= os5;
+    result = result << 4;
     result |= os;
     return result;
 }
@@ -177,27 +195,74 @@ uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float d
 // TODO: implement OutEnableCounterCtrl from Jacob's code
 // NOTE: tempConvert has been replaced
 
+uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3)
+{
+    uint16_t write_msg = 0x0000;
+    switch (addr)
+    {
+    case 0x01:
+        write_msg = fineOffset2Hex(val1);
+        break;
+    case 0x02:
+        write_msg = fineGain2Hex(val1);
+        break;
+    case 0x03:
+        write_msg = 42;
+        break; // refCtrlLinear in Jacob's
+    case 0x04:
+        write_msg = gainsAndOffset2Hex(val1, val2, val3);
+        break;
+    case 0x05:
+        write_msg = 4096;
+        break; // PGAConfigLimit in Jacob's
+    case 0x06:
+        write_msg = 4096;
+        break; // TempADCCtrl in Jacob's
+    case 0x07:
+        write_msg = 1952;
+        break; // OutEnableCounterCtrl in Jacob's
+    default:
+        write_msg = fineOffset2Hex(val1);
+        break;
+    }
+    return write_msg;
+}
 uint8_t mapDesiredFrontToReal(float des_front_gain)
 {
-  uint8_t front_gain;
-  if (des_front_gain >= 128) {
-    front_gain = 0x07;
-  } else if (des_front_gain >= 63.5) {
-    front_gain = 0x06;
-  } else if (des_front_gain >= 42) {
-    front_gain = 0x05;
-  } else if (des_front_gain >= 31.5) {
-    front_gain = 0x04;
-  } else if (des_front_gain >= 23.5) {
-    front_gain = 0x03;
-  } else if (des_front_gain >= 15.5) {
-    front_gain = 0x02;
-  } else if (des_front_gain >= 7.5) {
-    front_gain = 0x01;
-  } else {
-    front_gain = 0x00; // Gain is 4
-  }
-  return front_gain;
+    uint8_t front_gain;
+    if (des_front_gain >= 128)
+    {
+        front_gain = 0x07;
+    }
+    else if (des_front_gain >= 63.5)
+    {
+        front_gain = 0x06;
+    }
+    else if (des_front_gain >= 42)
+    {
+        front_gain = 0x05;
+    }
+    else if (des_front_gain >= 31.5)
+    {
+        front_gain = 0x04;
+    }
+    else if (des_front_gain >= 23.5)
+    {
+        front_gain = 0x03;
+    }
+    else if (des_front_gain >= 15.5)
+    {
+        front_gain = 0x02;
+    }
+    else if (des_front_gain >= 7.5)
+    {
+        front_gain = 0x01;
+    }
+    else
+    {
+        front_gain = 0x00; // Gain is 4
+    }
+    return front_gain;
 }
 
 uint8_t mapDesiredOutToReal(float des_output_gain)
@@ -207,23 +272,23 @@ uint8_t mapDesiredOutToReal(float des_output_gain)
     {
         output_gain = 0x06; // gain of 9
     }
-    else if (output_gain >= 5.5)
+    else if (des_output_gain >= 5.5)
     {
         output_gain = 0x05; // gain of 6
     }
-    else if (output_gain >= 4)
+    else if (des_output_gain >= 4)
     {
         output_gain = 0x04; // gain of 4.5
     }
-    else if (output_gain >= 3.1)
+    else if (des_output_gain >= 3.1)
     {
         output_gain = 0x03; // gain of 3.6
     }
-    else if (output_gain >= 2.5)
+    else if (des_output_gain >= 2.5)
     {
         output_gain = 0x02; // gain of 3
     }
-    else if (output_gain >= 2.1)
+    else if (des_output_gain >= 2.1)
     {
         output_gain = 0x01; // gain of 2.4
     }

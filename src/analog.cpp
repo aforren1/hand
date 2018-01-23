@@ -24,7 +24,7 @@ void analog::readAllOnce(std::array<uint16_t, 20> &recent_values)
     }
 }
 
-float readChannelMillivolt(uint8_t channel)
+float analog::readChannelMillivolt(uint8_t channel)
 {
     // returns analog reading in millivolts
     unsigned int val = adc->analogRead(channel);
