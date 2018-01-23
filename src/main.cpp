@@ -13,7 +13,7 @@
 #include "serial_comm.hpp"
 #endif
 
-// TODO: Figure out why we need this
+// TODO: Figure out why we need these
 extern "C" {
   int _getpid(){ return -1;}
   int _kill(int pid, int sig){ return -1; }
@@ -25,7 +25,7 @@ std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 std::array<uint8_t, 64> buffer_tx; // transfer buffer
 
 uint8_t comm_status = 0;                       ///< HID communication status
-bool is_sampling = false;                      ///< false is settings, true is sampling
+bool is_sampling = true;                      ///< false is settings, true is sampling
 Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
 std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
 std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through applyRotation

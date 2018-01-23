@@ -86,9 +86,11 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 {
                     if (settings.pga_settings.gains_and_offsets[i][j] != settings.pga_settings_copy.gains_and_offsets[i][j])
                     {
+                        #ifndef NOHARDWARE
                         calibration::calibrateChannel(constants::pin::sensor_pins_nested[i][j],
                                                       settings.pga_settings.gains_and_offsets[i][j],
                                                       multi_pga);
+                        #endif
                         settings.pga_settings_copy.gains_and_offsets[i][j] = settings.pga_settings.gains_and_offsets[i][j];
                     }
                 }

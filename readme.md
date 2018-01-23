@@ -12,7 +12,7 @@ To use via PlatformIO:
 8. To clean up files (sometimes helps in development), `platformio run --target clean`
 
 Notes:
-
+ - Make sure Teensy is up to date (`platformio platform update`), but let me know if you're compiling on Windows (woes in Windows + Visual Studio Code)
  - setters return an integer (0 on success, > 0 on failure).
    - We can either keep these vague (i.e. "Your last command failed"), or get specific.
  - We should use namespaces excessively.
