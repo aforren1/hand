@@ -5,11 +5,10 @@
 
 namespace cplex = constants::multiplex;
 
-
-MultiPGA::MultiPGA(PGASettings& pga_settings)
+MultiPGA::MultiPGA(PGASettings &pga_settings)
 {
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
-    Wire2.setDefaultTimeout(200000); 
+    Wire2.setDefaultTimeout(200000);
     // TODO: not sure if the following loop *does* anything -- based on commented-out code, nothing seems to be set?
     // originally from pga309.cpp
     for (uint8_t chan = 0; chan < constants::pin::n_channels; chan++)
@@ -45,7 +44,6 @@ void MultiPGA::channelEnable()
         // TODO: send message?
     }
 }
-
 
 void MultiPGA::clear()
 {
@@ -92,7 +90,6 @@ void MultiPGA::accessRegister(uint8_t addr, bool is_read)
     {
         MultiPGA::readPGA(addr);
     }
-
 }
 
 void MultiPGA::readPGA(uint8_t addr)
@@ -117,7 +114,7 @@ void MultiPGA::readPGA(uint8_t addr)
     }
     if (addr == 0x00)
     {
-        uint16_t count = packing::bigendbytes2num<uint16_t>(temp_byte_holder);
+        uint16_t count = packing::bigendbytes2num<uint16_t>(temp_byte_holder); //TODO: sanity check?
         float temperature = 0.0625 * count;
         // send temperature message
     }
@@ -146,33 +143,93 @@ uint16_t fineGain2Hex(float fine_gain)
 
 // TODO: Implement refCtrlLinear from Jacob's code
 
-uint16_t gainsAndOffset2Hex(float front_gain, float output_gain, float coarse_offset)
+uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float des_coarse_offset)
 {
-    uint8_t OWD = 0x01;
+    uint8_t owd = 0x01;
     uint8_t gi3 = 0x00;
-    uint8_t fg, og;
-    if (output_gain >= 8.5)
+    uint8_t rfb = 0x00;
+    uint8_t os = abs(des_coarse_offset) / (constants::calibration::vcc * 0.85);
+    uint8_t os5 = 0x00;
+    if (des_coarse_offset < 0)
     {
-        og = 0x06; // gain of 9
-    } else if (output_gain >= 5.5)
-    {
-        og = 0x05; // gain of 6
-    } else if (output_gain >= 4)
-    {
-        og = 0x04; // gain of 4.5
-    } else if (output_gain >= 3.1)
-    {
-        og = 0x03; // gain of 3.6
-    } else if (output_gain >= 2.5)
-    {
-        og = 0x02; // gain of 3
-    } else if (output_gain >= 2.1)
-    {
-        og = 0x01; // gain of 2.4
-    } else {
-        og = 0x00; // gain of 2
+        os5 = 0x01;
     }
+    // Limits OS register for magnitude, prevents overflow into negative offset and other registers
+    if (os > 0x0F)
+    {
+        os = 0x0F;
+    }
+    uint8_t output_gain = mapDesiredOutToReal(des_output_gain);
+    uint8_t front_gain = mapDesiredFrontToReal(des_front_gain);
 
-    
+    uint16_t result = owd; result = result << 3;
+    result |= output_gain; result = result << 1;
+    result |= gi3; result = result << 3;
+    result |= front_gain; result = result << 3;
+    result |= rfb; result = result << 1;
+    result |= os5; result = result << 4;
+    result |= os;
+    return result;
+}
 
+// TODO: Implement PGAConfigLimit from Jacob's code
+// TODO: implement TempADCCtrl from Jacob's code
+// TODO: implement OutEnableCounterCtrl from Jacob's code
+// NOTE: tempConvert has been replaced
+
+uint8_t mapDesiredFrontToReal(float des_front_gain)
+{
+  uint8_t front_gain;
+  if (des_front_gain >= 128) {
+    front_gain = 0x07;
+  } else if (des_front_gain >= 63.5) {
+    front_gain = 0x06;
+  } else if (des_front_gain >= 42) {
+    front_gain = 0x05;
+  } else if (des_front_gain >= 31.5) {
+    front_gain = 0x04;
+  } else if (des_front_gain >= 23.5) {
+    front_gain = 0x03;
+  } else if (des_front_gain >= 15.5) {
+    front_gain = 0x02;
+  } else if (des_front_gain >= 7.5) {
+    front_gain = 0x01;
+  } else {
+    front_gain = 0x00; // Gain is 4
+  }
+  return front_gain;
+}
+
+uint8_t mapDesiredOutToReal(float des_output_gain)
+{
+    uint8_t output_gain;
+    if (des_output_gain >= 8.5)
+    {
+        output_gain = 0x06; // gain of 9
+    }
+    else if (output_gain >= 5.5)
+    {
+        output_gain = 0x05; // gain of 6
+    }
+    else if (output_gain >= 4)
+    {
+        output_gain = 0x04; // gain of 4.5
+    }
+    else if (output_gain >= 3.1)
+    {
+        output_gain = 0x03; // gain of 3.6
+    }
+    else if (output_gain >= 2.5)
+    {
+        output_gain = 0x02; // gain of 3
+    }
+    else if (output_gain >= 2.1)
+    {
+        output_gain = 0x01; // gain of 2.4
+    }
+    else
+    {
+        output_gain = 0x00; // gain of 2
+    }
+    return output_gain;
 }
