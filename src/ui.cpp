@@ -11,14 +11,14 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
 {
     if (is_sampling)
     {
-        if (buffer_rx[0] == 's') // change to settings mode
+        if (buffer_rx[0] == 'c') // change to config mode
         {
             is_sampling = false;
         }
     }
     else // dealing with settings
     {
-        if (buffer_rx[0] == 'c') // config
+        if (buffer_rx[0] == 's') // set
         {
             if (buffer_rx[1] == 'f') // sampling frequency
             {
