@@ -2,7 +2,7 @@
 To use via PlatformIO:
 
 1. Install platformio-ide (via visual studio code or atom?)
-    - The Arduino IDE + Teensyduino *could* work, but it's a bit more effort to get C++11/STL support
+    - The Arduino IDE + Teensyduino *could* work, but it's a bit more effort to get C++11/standard library support
 2. clone this directory (`git clone --recursive -j2 https://github.com/aforren1/hand`)
 3. Open the directory in the text editor of choice
 4. Hit Ctrl+Shift+P and find "PlatformIO: New Terminal"
