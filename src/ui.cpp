@@ -123,7 +123,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
             // calibration::calibrateAllChannels(settings.pga_settings);
             is_sampling = true;
         }
-        else if (buffer_rx[0] == 'b') // Run calibration without moving to acquisition mode
+        else if (buffer_rx[0] == 't') // Run calibration without moving to acquisition mode
         {
 #ifndef NOHARDWARE
             calibration::calibrateAllChannels(settings.pga_settings, multi_pga);
@@ -146,4 +146,6 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
             }
         }
     }
+    buffer_rx.fill(0);
+    buffer_tx.fill(0);
 }

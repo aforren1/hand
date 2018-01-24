@@ -8,7 +8,7 @@ To use via PlatformIO:
 4. Hit Ctrl+Shift+P and find "PlatformIO: New Terminal"
 5. In that terminal, type `platformio init --board teensy35`
 6. To compile & link, `platformio run`
-7. To upload to the board, `platformio run --target upload`
+7. To upload to the board, `platformio run --target upload` (add `-e teensy35_serial_dbg` to target the serial env)
 8. To clean up files (sometimes helps in development), `platformio run --target clean`
 
 Notes:
@@ -43,7 +43,7 @@ Notes:
   - last error code ('e'), to see whether/why the previous command failed
 - acquisition ('a')
   - Change to acquisition mode
-- calibration ('b') (sorry, need a new char)
+- tuning ('t') (sorry, need a new char)
   - Run calibration on all channels (without moving to acquisition mode)
 - data ('d')
   - Single sample reading across all channels, using the predefined game mode

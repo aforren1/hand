@@ -86,6 +86,7 @@ void loop()
         { // send data immediately
             communication::sendSample(timestamp, deviation, recent_values, buffer_tx);
         }
+        buffer_tx.fill(0);
     }
     // check for data *after* read, so the time it takes to do that
     // is folded into the busy wait
