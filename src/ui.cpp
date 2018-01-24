@@ -49,9 +49,9 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
             }
             else if (buffer_rx[1] == 'g') // gain
             {
-                // first 2 bytes are the finger (-1 for all fingers)
-                // next 2 are the channel (-1 for all channels)
-                // next 2 are the slot (0 = front gain, 1 = fine, 2 = output, 3 = product)
+                // first byte is the finger (-1 for all fingers)
+                // next byte is the channel (-1 for all channels)
+                // next byte is the slot (0 = front gain, 1 = fine, 2 = output, 3 = product)
                 // next 4 are the float value
                 std::array<uint8_t, 4> flt_container;
                 int8_t finger = buffer_rx[2];

@@ -23,6 +23,30 @@ Notes:
    - multiplexer and settings use structs (multiplexer cares about the current selection).
  - On various Linux distributions, you'll need to run `sudo cp inst/49-teensy.rules /etc/udev/rules.d/49-teensy.rules` (see `inst/49-teensy.rules` for details).
 
+## Commands:
+
+### Config mode
+- set ('s')
+  - sampling frequency ('f'), a float (0, 1000], default `100`
+  - game mode ('m'), truthy or falsy, default `false`
+    - Whether the conversion to cartesian coordinates happens on the device (T) or not (F)
+  - verbosity ('v'), truthy or falsy, default `false`
+    - Whether to send messages about the details of various operations inside the code (T) or not (F)
+  - gain ('g'), depending on the targeted gain
+    - Third element in the buffer is the target finger, [-1, 4] (-1 sets all fingers)
+    - Fourth element in the buffer is the target channel, [-1, 3] (-1 sets all channels)
+    - Fifth element in the buffer is the target gain, [0, 3]
+      - 0 is the front-end gain, 1 is the fine gain, 2 is the output gain, and 3 is a product of the previous
+  - The last 4 elements are the float value, bounds determined by the particular gain being modified
+- get ('g')
+  - All of the above (except gain operates on finger/channel/gain at a time)
+  - last error code ('e'), to see whether/why the previous command failed
+- acquire ('a')
+  - Change to acquisition mode
+### Acquire mode
+- config ('c')
+  - Change to config mode
+
 ```python
 b'a' # change to acquire mode (sampling) (only from config mode)
 b'c' # change to config mode (no sampling) (only from acquire mode)
