@@ -41,15 +41,15 @@ Notes:
 - get ('g')
   - All of the above (except gain operates on finger/channel/gain at a time)
   - last error code ('e'), to see whether/why the previous command failed
-- acquire ('a')
+- acquisition ('a')
   - Change to acquisition mode
-### Acquire mode
+### Acquisition mode
 - config ('c')
   - Change to config mode
 
 ```python
-b'a' # change to acquire mode (sampling) (only from config mode)
-b'c' # change to config mode (no sampling) (only from acquire mode)
+b'a' # change to acquisition mode (sampling) (only from config mode)
+b'c' # change to config mode (no sampling) (only from acquisition mode)
 # can only do the following in config mode:
 b'sf' + struct.pack('>f', 1000.0) # set the sampling frequency to 1000 Hz
 b'sm' + struct.pack('B', 1) # turn on game mode
