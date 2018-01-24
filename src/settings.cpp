@@ -11,7 +11,7 @@ Settings::Settings(float sampling_frequency, bool game, bool verbose)
 
 uint8_t Settings::setSamplingFrequency(float sampling_frequency)
 {
-    if (sampling_frequency > 1000 || sampling_frequency <= 0) // current sampling frequency maxes out at 1kHz (hardware & communication restriction), and cannot be 0 or negative
+    if (sampling_frequency > 1000 || sampling_frequency <= 0.01) // current sampling frequency maxes out at 1kHz (hardware & communication restriction), and cannot be 0 or negative
     {
         return 1;
     }
