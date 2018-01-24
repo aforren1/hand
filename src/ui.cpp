@@ -6,6 +6,7 @@
 #include "packing.hpp"
 #include "constants.hpp"
 #include "multipga.hpp"
+#include "analog.hpp"
 
 #if USB_RAWHID
 #include "hid_comm.hpp"
@@ -101,7 +102,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 communication::sendInfo(buffer_tx);
             }
         }
-        else if (buffer_rx[0] == 'a') // change to acquire mode
+        else if (buffer_rx[0] == 'a') // change to acquisition mode
         {
             // try a "smart" recalibration -- only touch channels which have channged
             for (std::size_t i = 0; i < settings.pga_settings.gains_and_offsets.size(); i++)
@@ -121,6 +122,28 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
             }
             // calibration::calibrateAllChannels(settings.pga_settings);
             is_sampling = true;
+        }
+        else if (buffer_rx[0] == 'b') // Run calibration without moving to acquisition mode
+        {
+#ifndef NOHARDWARE
+            calibration::calibrateAllChannels(settings.pga_settings, multi_pga);
+#endif
+            settings.pga_settings_copy = settings.pga_settings;
+        }
+        else if (buffer_rx[0] == 'd') // single data
+        {
+            std::array<uint16_t, 20> temp_data;
+            analog::readAllOnce(temp_data);
+            if (settings.getGameMode())
+            {
+                std::array<float, 15> temp_rot_data;
+                analog::applyRotation(temp_data, temp_rot_data);
+                communication::sendSample(temp_rot_data, buffer_tx);
+            }
+            else
+            {
+                communication::sendSample(0, 0, temp_data, buffer_tx);
+            }
         }
     }
 }

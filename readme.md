@@ -39,13 +39,19 @@ Notes:
       - 0 is the front-end gain, 1 is the fine gain, 2 is the output gain, and 3 is a product of the previous
   - The last 4 elements are the float value, bounds determined by the particular gain being modified
 - get ('g')
-  - All of the above (except gain operates on finger/channel/gain at a time)
+  - All of the above (except gain operates on a single finger/channel/gain at a time)
   - last error code ('e'), to see whether/why the previous command failed
 - acquisition ('a')
   - Change to acquisition mode
+- calibration ('b') (sorry, need a new char)
+  - Run calibration on all channels (without moving to acquisition mode)
+- data ('d')
+  - Single sample reading across all channels, using the predefined game mode
 ### Acquisition mode
 - config ('c')
   - Change to config mode
+
+Below are examples of packets that might be sent, and the results:
 
 ```python
 b'a' # change to acquisition mode (sampling) (only from config mode)
