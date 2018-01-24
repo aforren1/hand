@@ -13,7 +13,7 @@
 #include "serial_comm.hpp"
 #endif
 
-int last_err = 0;
+uint8_t last_err_code = 0;
 
 void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std::array<uint8_t, 64> &buffer_tx,
                      Settings &settings, MultiPGA &multi_pga)
@@ -34,18 +34,18 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 std::array<uint8_t, 4> flt_container;
                 std::copy_n(buffer_rx.begin() + 2, 4, flt_container.begin());
                 float freq = packing::bigendbytes2num<float>(flt_container);
-                last_err = settings.setSamplingFrequency(freq);
+                last_err_code = settings.setSamplingFrequency(freq);
                 // store res as last error
             }
             else if (buffer_rx[1] == 'm') // game mode
             {
                 uint8_t val = buffer_rx[2];
-                last_err = settings.setGameMode(val);
+                last_err_code = settings.setGameMode(val);
             }
             else if (buffer_rx[1] == 'v') // verbosity
             {
                 uint8_t val = buffer_rx[2];
-                last_err = settings.setVerbosity(val);
+                last_err_code = settings.setVerbosity(val);
             }
             else if (buffer_rx[1] == 'g') // gain
             {
@@ -59,7 +59,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 int8_t slot = buffer_rx[4];
                 std::copy_n(buffer_rx.begin() + 5, 4, flt_container.begin());
                 float val = packing::bigendbytes2num<float>(flt_container);
-                last_err = settings.setGain(finger, channel, slot, val);
+                last_err_code = settings.setGain(finger, channel, slot, val);
             }
         }
         else if (buffer_rx[0] == 'g') // get
@@ -93,6 +93,11 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 std::array<uint8_t, 4> flt_container;
                 packing::num2bigendbytes(gain, flt_container);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
+                communication::sendInfo(buffer_tx);
+            }
+            else if (buffer_rx[1] == 'e') // last error
+            {
+                buffer_tx[0] = last_err_code;
                 communication::sendInfo(buffer_tx);
             }
         }

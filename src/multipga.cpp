@@ -108,10 +108,8 @@ uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3)
 
 void MultiPGA::readPGA(uint8_t addr)
 {
-    uint8_t n_bytes = 0;
+    uint8_t n_bytes;
     uint8_t redundancy_bytes = 5;
-    uint8_t byte2 = 0x00;
-    uint8_t byte1 = 0x00;
     std::array<uint8_t, 2> temp_byte_holder;
     for (uint8_t i = 0; i < redundancy_bytes; i++)
     {

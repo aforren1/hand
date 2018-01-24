@@ -49,7 +49,7 @@ struct Settings
      * 
      * @param sampling_frequency_hz can take any float value (0, 1000]
      */
-    int setSamplingFrequency(float sampling_frequency_hz);
+    uint8_t setSamplingFrequency(float sampling_frequency_hz);
     /**
      * @brief get the current sampling frequency, in hertz.
      * 
@@ -61,7 +61,7 @@ struct Settings
      * 
      * @param game_mode if true, the channel transformation to cartesian coordinates takes place on the Teensy
      */
-    int setGameMode(bool game_mode);
+    uint8_t setGameMode(bool game_mode);
     /**
      * @brief get whether game mode is on or not.
      * 
@@ -73,7 +73,7 @@ struct Settings
      * 
      * @param verbosity determines whether unsolicited debugging messages will be sent to the user.
      */
-    int setVerbosity(bool verbosity);
+    uint8_t setVerbosity(bool verbosity);
     /**
      * @brief get the current verbosity level.
      * 
@@ -96,7 +96,7 @@ struct Settings
      * 
      * @todo In verbose mode, should we shout if someone tries to set the individual channel gain?
      */
-    int setGain(int8_t finger, int8_t channel, int8_t slot, float value);
+    uint8_t setGain(int8_t finger, int8_t channel, int8_t slot, float value);
     /**
      * @brief get the gain setting for a particular finger, channel, and slot.
      * 

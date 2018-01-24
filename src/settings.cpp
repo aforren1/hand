@@ -9,7 +9,7 @@ Settings::Settings(float sampling_frequency, bool game, bool verbose)
     verbosity = verbose;
 }
 
-int Settings::setSamplingFrequency(float sampling_frequency)
+uint8_t Settings::setSamplingFrequency(float sampling_frequency)
 {
     if (sampling_frequency > 1000 || sampling_frequency <= 0) // current sampling frequency maxes out at 1kHz (hardware & communication restriction), and cannot be 0 or negative
     {
@@ -26,7 +26,7 @@ float Settings::getSamplingFrequency()
     return sampling_frequency_hz;
 }
 
-int Settings::setGameMode(bool game)
+uint8_t Settings::setGameMode(bool game)
 {
     game_mode = game;
     return 0;
@@ -37,7 +37,7 @@ bool Settings::getGameMode()
     return game_mode;
 }
 
-int Settings::setVerbosity(bool verbose)
+uint8_t Settings::setVerbosity(bool verbose)
 {
     verbosity = verbose;
     return 0;
@@ -48,7 +48,7 @@ bool Settings::getVerbosity()
     return verbosity;
 }
 
-int Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)
+uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)
 {
     // check indexing
     if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || slot < 0 || slot > 3)

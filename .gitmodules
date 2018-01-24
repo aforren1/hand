@@ -1,0 +1,6 @@
+[submodule "lib/adc"]
+	path = lib/adc
+	url = https://github.com/pedvide/adc
+[submodule "lib/i2c_t3"]
+	path = lib/i2c_t3
+	url = https://github.com/nox771/i2c_t3

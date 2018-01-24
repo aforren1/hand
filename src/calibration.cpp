@@ -91,7 +91,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
                                     desired_front_gain * excess_mv / (ccalib::mvcc);
         gain_vec[4] = desired_fine_offset;
         offset_msg = multi_pga.writePGA(0x01, desired_fine_offset, 0, 0);
-        uint16_t gain_msg = multi_pga.writePGA(0x02, desired_fine_gain, 0, 0);
+        uint16_t fine_gain_msg = multi_pga.writePGA(0x02, desired_fine_gain, 0, 0);
     }
 
     // Now we do our fine adjustments
