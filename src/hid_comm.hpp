@@ -63,6 +63,8 @@ void sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> 
  * @return the number of bytes received as an integer
  */
 int receiveData(std::array<uint8_t, 64> &rx_data);
+
+void sendInfo(std::array<uint8_t, 64> &tx_data);
 };
 
 #endif

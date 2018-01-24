@@ -93,6 +93,6 @@ void loop()
     comm_status = communication::receiveData(buffer_rx); // Check for any new messages from host
     if (comm_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
-        ui::handleInput(is_sampling, buffer_rx, settings, multi_pga); // all args are pass by reference
+        ui::handleInput(is_sampling, buffer_rx, buffer_tx, settings, multi_pga); // all args are pass by reference
     }
 }

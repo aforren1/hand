@@ -44,3 +44,8 @@ int communication::receiveData(std::array<uint8_t, 64> &rx_data)
     }
     return n;
 }
+
+void communication::sendInfo(std::array<uint8_t, 64> &tx_data)
+{
+    Serial.write(tx_data.data(), 64);
+}
