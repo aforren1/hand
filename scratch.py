@@ -9,5 +9,5 @@ ser.write(b'c')
 
 ser.write(b'sf' + struct.pack('>f', 500))
 ser.write(b'gf')
-xx = ser.readlines()
-struct.unpack('>f', xx[0][0:4])
+xx = ser.readline()
+struct.unpack('>f', xx[0:4])

@@ -15,9 +15,9 @@
 
 // Required for using the standard library, unclear why
 extern "C" {
-  int _getpid(){ return -1;}
-  int _kill(int pid, int sig){ return -1; }
-  int _write(){return -1;}
+int _getpid() { return -1; }
+int _kill(int pid, int sig) { return -1; }
+int _write() { return -1; }
 }
 
 // "global" things

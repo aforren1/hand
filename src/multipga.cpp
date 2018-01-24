@@ -7,7 +7,7 @@ namespace cplex = constants::multiplex;
 
 MultiPGA::MultiPGA(PGASettings &pga_settings)
 {
-    #ifndef NOHARDWARE
+#ifndef NOHARDWARE
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
     Wire2.setDefaultTimeout(200000);
     // TODO: not sure if the following loop *does* anything -- based on commented-out code, nothing seems to be set?
@@ -19,7 +19,7 @@ MultiPGA::MultiPGA(PGASettings &pga_settings)
     // originally from main.cpp
     MultiPGA::reset();
     MultiPGA::setChannel(0);
-    #endif
+#endif
 }
 
 void MultiPGA::reset()
