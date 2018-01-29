@@ -22,7 +22,6 @@ int _write() { return -1; }
 
 // "global" things
 std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
-std::array<uint8_t, 64> buffer_tx; // transfer buffer
 
 uint8_t comm_status = 0;                       ///< HID communication status
 bool is_sampling = false;                      ///< false is settings, true is sampling
@@ -59,8 +58,7 @@ void setup()
 #endif
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
-    buffer_rx.fill(0); // initialize transfer and receive buffers
-    buffer_tx.fill(0);
+    buffer_rx.fill(0); // initialize receive buffer
 }
 
 void loop()
@@ -80,20 +78,19 @@ void loop()
         if (settings.getGameMode())
         {                                                                  // if in "game" mode, perform rotation and send data
             analog::applyRotation(recent_values, converted_recent_values); // TODO: move applyRotation somewhere more appropriate
-            communication::sendSample(converted_recent_values, buffer_tx);
+            communication::sendSample(converted_recent_values);
         }
         else
         { // send data immediately
-            communication::sendSample(timestamp, deviation, recent_values, buffer_tx);
+            communication::sendSample(timestamp, deviation, recent_values);
         }
-        buffer_tx.fill(0);
     }
     // check for data *after* read, so the time it takes to do that
     // is folded into the busy wait
     // if there is a new message, our timing will be borked anyway
-    comm_status = communication::receiveData(buffer_rx); // Check for any new messages from host
+    comm_status = communication::receiveRawPacket(buffer_rx); // Check for any new messages from host
     if (comm_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
-        ui::handleInput(is_sampling, buffer_rx, buffer_tx, settings, multi_pga); // all args are pass by reference
+        ui::handleInput(is_sampling, buffer_rx, settings, multi_pga); // all args are pass by reference
     }
 }

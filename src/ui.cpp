@@ -16,9 +16,10 @@
 
 uint8_t last_err_code = 0;
 
-void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std::array<uint8_t, 64> &buffer_tx,
+void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx,
                      Settings &settings, MultiPGA &multi_pga)
 {
+    std::array<uint8_t, 64> buffer_tx;
     if (is_sampling)
     {
         if (buffer_rx[0] == 'c') // change to config mode
@@ -138,14 +139,13 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
             {
                 std::array<float, 15> temp_rot_data;
                 analog::applyRotation(temp_data, temp_rot_data);
-                communication::sendSample(temp_rot_data, buffer_tx);
+                communication::sendSample(temp_rot_data);
             }
             else
             {
-                communication::sendSample(0, 0, temp_data, buffer_tx);
+                communication::sendSample(0, 0, temp_data);
             }
         }
     }
     buffer_rx.fill(0);
-    buffer_tx.fill(0);
 }

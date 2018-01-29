@@ -22,8 +22,9 @@ void communication::packGameSample(const std::array<float, 15> &game_sample, std
     // at this point, tx_data should have 60 bytes filled
 }
 
-void communication::sendSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
+void communication::sendSample(const std::array<float, 15> &game_sample)
 {
+    std::array<uint8_t, 64> tx_data;
     communication::packGameSample(game_sample, tx_data);
     RawHID.send(tx_data.data(), 1);
 }
@@ -46,13 +47,14 @@ void communication::packRawSample(uint32_t timestamp, int16_t deviation, const s
     // should have 46 bytes filled by now
 }
 
-void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
+void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample)
 {
+    std::array<uint8_t, 64> tx_data;
     communication::packRawSample(timestamp, deviation, raw_sample, tx_data);
     RawHID.send(tx_data.data(), 1);
 }
 
-int communication::receiveData(std::array<uint8_t, 64> &rx_data)
+int communication::receiveRawPacket(std::array<uint8_t, 64> &rx_data)
 {
     int code = RawHID.recv(rx_data.data(), 0);
     return code;
