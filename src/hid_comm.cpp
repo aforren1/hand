@@ -4,6 +4,7 @@
 #include "packing.hpp"
 #include <array>
 #include <algorithm>
+#include <string>
 #include "hid_comm.hpp"
 
 void communication::initComm() {}
@@ -60,4 +61,9 @@ int communication::receiveData(std::array<uint8_t, 64> &rx_data)
 void communication::sendInfo(std::array<uint8_t, 64> &tx_data)
 {
     RawHID.send(tx_data.data(), 1);
+}
+
+void communication::sendString(std::string tx_string)
+{
+    RawHID.send(tx_string.append(64 - tx_string.length(), ' ').c_str(), 0);
 }

@@ -1,5 +1,6 @@
 #include "Arduino.h"
 #include <array>
+#include <string>
 #include "serial_comm.hpp"
 
 void communication::initComm()
@@ -48,4 +49,9 @@ int communication::receiveData(std::array<uint8_t, 64> &rx_data)
 void communication::sendInfo(std::array<uint8_t, 64> &tx_data)
 {
     Serial.write(tx_data.data(), 64);
+}
+
+void communication::sendString(std::string tx_string)
+{
+    Serial.write(tx_string.append(64 - tx_string.length(), ' ').c_str(), 64);
 }
