@@ -64,7 +64,7 @@ void sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> 
  */
 int receiveData(std::array<uint8_t, 64> &rx_data);
 
-void sendInfo(std::array<uint8_t, 64> &tx_data);
+void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 
 void sendString(std::string tx_string);
 };

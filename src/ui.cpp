@@ -71,19 +71,19 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 std::array<uint8_t, 4> flt_container;
                 packing::num2bigendbytes(freq, flt_container);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
-                communication::sendInfo(buffer_tx);
+                communication::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'm') // game mode
             {
                 bool mode = settings.getGameMode();
                 buffer_tx[0] = mode;
-                communication::sendInfo(buffer_tx);
+                communication::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'v') // verbosity
             {
                 bool verbosity = settings.getVerbosity();
                 buffer_tx[0] = verbosity;
-                communication::sendInfo(buffer_tx);
+                communication::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'g') // gain
             {
@@ -94,12 +94,12 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, std:
                 std::array<uint8_t, 4> flt_container;
                 packing::num2bigendbytes(gain, flt_container);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
-                communication::sendInfo(buffer_tx);
+                communication::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'e') // last error
             {
                 buffer_tx[0] = last_err_code;
-                communication::sendInfo(buffer_tx);
+                communication::sendRawPacket(buffer_tx);
             }
         }
         else if (buffer_rx[0] == 'a') // change to acquisition mode

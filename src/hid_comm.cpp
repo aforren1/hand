@@ -58,7 +58,7 @@ int communication::receiveData(std::array<uint8_t, 64> &rx_data)
     return code;
 }
 
-void communication::sendInfo(std::array<uint8_t, 64> &tx_data)
+void communication::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 {
     RawHID.send(tx_data.data(), 1);
 }
