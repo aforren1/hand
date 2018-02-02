@@ -35,7 +35,7 @@ float readChannelMillivolt(uint8_t channel);
  * @param converted_values is a reference to a std::array of type float and length 15. The results of the function are stored here.
  * @return void
  */
-void applyRotation(std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values);
+void applyRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values);
 };
 
 #endif

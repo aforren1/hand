@@ -71,7 +71,6 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
         }
 
         float desired_coarse_offset = -error_mv;
-        // TODO: unimplemented
         uint16_t gain_cmsg = multi_pga.writePGA(0x04, desired_front_gain, desired_output_gain, desired_coarse_offset);
         uint16_t coarse_multi = gain_cmsg & 0x000f;
         uint16_t coarse_sign = (gain_cmsg & 0x0010) >> 4;

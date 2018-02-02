@@ -31,17 +31,14 @@ float analog::readChannelMillivolt(uint8_t channel)
     return val * 3.3 / adc->getMaxValue(ADC_0) * 1000;
 }
 
-void analog::applyRotation(std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)
+void analog::applyRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)
 {
-    // scale to [0, 1] and calculate x, y, z forces. (think about this hard, though...)
     int j = 0;
     for (int i = 0; i < 15; i += 3)
     {
-        converted_values[i] = (recent_values[j] / cadc::max_int) * cadc::cos_rot - // x
-                              (recent_values[j + 1] / cadc::max_int) * cadc::sin_rot;
-        converted_values[i + 1] = (recent_values[j] / cadc::max_int) * cadc::sin_rot - // y
-                                  (recent_values[j + 1] / cadc::max_int) * cadc::cos_rot;
-        converted_values[i + 2] = (recent_values[j + 2] / cadc::max_int) + (recent_values[j + 3] / cadc::max_int); // z. TODO: might be subtract? I tend to get values centered around -1
+        converted_values[i] = ((recent_values[j] / cadc::max_int) - (recent_values[j] / cadc::max_int))/sqrt(2);
+        converted_values[i + 1] = ((recent_values[j] / cadc::max_int) + (recent_values[j] / cadc::max_int))/sqrt(2);
+        converted_values[i + 2] = (recent_values[j + 2] / cadc::max_int) + (recent_values[j + 3] / cadc::max_int);
         j += 4;
     }
 }
