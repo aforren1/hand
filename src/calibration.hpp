@@ -10,13 +10,13 @@ namespace calibration
 /**
      * @brief Calibrate a single channel.
      * 
-     * @param channel is the target to calibrate
+     * @param mux_channel is the target to calibrate (not the analog pin, but 0-19!)
      * @param gain_vec is a reference to a std::array containing the requested gains and offsets for that particular channel
      * @return int for success (0) or failure (1)
      * 
      * @note We *could* return a bool, but int may give us flexibility (e.g. return 2 for bad fine adjustment?)
      */
-int calibrateChannel(uint8_t channel, std::array<float, 6> &gain_vec, MultiPGA &multi_pga);
+int calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec, MultiPGA &multi_pga);
 
 /**
      * @brief Calls calibration::calibrateChannel on all channels.

@@ -15,13 +15,13 @@ int calibration::calibrateAllChannels(PGASettings &pga_settings, MultiPGA &multi
     {
         for (int j = 0; j < 4; j++)
         {
-            calibration::calibrateChannel(cpin::sensor_pins_nested[i][j], pga_settings.gains_and_offsets[i][j], multi_pga);
+            calibration::calibrateChannel(cpin::mux_pins_nested[i][j], pga_settings.gains_and_offsets[i][j], multi_pga);
         }
     }
     return 0;
 }
 
-int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_vec, MultiPGA &multi_pga)
+int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec, MultiPGA &multi_pga)
 // 0th index is front gain, 1st index is fine gain, 2nd index is output gain, 3rd is product (not used here)
 {
     float desired_front_gain;
@@ -35,7 +35,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
     {
         for (std::size_t i = 0; i < adc_readings.size(); ++i)
         {
-            adc_readings[i] = analog::readChannelMillivolt(channel);
+            adc_readings[i] = analog::readChannelMillivolt(cpin::sensor_pins[mux_channel]);
         }
         float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
         float average_mv = sum / ccalib::n_adc_readings;
@@ -54,7 +54,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
         // PART 1: Modify sensitivity
 
         // enable intended PGA channel
-        multi_pga.setChannel(channel);
+        multi_pga.setChannel(mux_channel);
         desired_front_gain = gain_vec[0];
         desired_output_gain = gain_vec[2];
         float coarse_mv_max = ccalib::vcc * 14 * 0.85; // TODO: make const
@@ -105,7 +105,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
         // ripped from earlier
         for (std::size_t i = 0; i < adc_readings.size(); ++i)
         {
-            adc_readings[i] = analog::readChannelMillivolt(channel);
+            adc_readings[i] = analog::readChannelMillivolt(cpin::sensor_pins[mux_channel]);
         }
         float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
         float average_mv = sum / ccalib::n_adc_readings;
@@ -124,7 +124,7 @@ int calibration::calibrateChannel(uint8_t channel, std::array<float, 6> &gain_ve
             continue; // criterion met
         }
         gain_vec[5] += iter_step; // update fine offset
-        multi_pga.setChannel(channel);
+        multi_pga.setChannel(mux_channel);
         offset_msg = multi_pga.writePGA(0x01, gain_vec[5], 0, 0);
         // put pause here for settling?
     }

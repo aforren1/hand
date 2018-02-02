@@ -22,6 +22,11 @@ const std::array<std::array<uint8_t, 4>, 5> sensor_pins_nested = {{{A12, A13, A1
                                                                    {A21, A22, A0, A1},
                                                                    {A5, A4, A3, A2},
                                                                    {A6, A7, A8, A9}}};
+const std::array<std::array<uint8_t, 4>, 5> mux_pins_nested = {{{0, 1, 2, 3},
+                                                                {4, 5, 6, 7},
+                                                                {8, 9, 10, 11},
+                                                                {12, 13, 14, 15},
+                                                                {16, 17, 18, 19}}};
 const unsigned int led_for_calibration = 0;
 const unsigned int led_for_adc = 1;
 };
