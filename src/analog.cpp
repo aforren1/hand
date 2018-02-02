@@ -36,8 +36,8 @@ void analog::applyRotation(const std::array<uint16_t, 20> &recent_values, std::a
     int j = 0;
     for (int i = 0; i < 15; i += 3)
     {
-        converted_values[i] = ((recent_values[j] / cadc::max_int) - (recent_values[j] / cadc::max_int))/sqrt(2);
-        converted_values[i + 1] = ((recent_values[j] / cadc::max_int) + (recent_values[j] / cadc::max_int))/sqrt(2);
+        converted_values[i] = ((recent_values[j] / cadc::max_int) - (recent_values[j + 1] / cadc::max_int))/cadc::sqrt2;
+        converted_values[i + 1] = ((recent_values[j] / cadc::max_int) + (recent_values[j + 1] / cadc::max_int))/cadc::sqrt2;
         converted_values[i + 2] = (recent_values[j + 2] / cadc::max_int) + (recent_values[j + 3] / cadc::max_int);
         j += 4;
     }

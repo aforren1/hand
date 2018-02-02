@@ -28,12 +28,10 @@ const unsigned int led_for_adc = 1;
 
 namespace adc
 {
-const float pi = 4.0 * atan(1.0);
 const unsigned int resolution = 16; ///< ADC resolution (TODO: allow user to change)
 const unsigned int averaging = 16;  ///< Number of averaged samples *within* ADC
-const float cos_rot = cos(pi / 4.0);
-const float sin_rot = sin(pi / 4.0);
 const float max_int = USHRT_MAX;
+const float sqrt2 = sqrt(2);
 };
 
 namespace calibration
