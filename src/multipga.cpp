@@ -8,28 +8,21 @@ namespace cplex = constants::multiplex;
 MultiPGA::MultiPGA(PGASettings &pga_settings)
 {
 #ifndef NOHARDWARE
+    // Setup for Master mode, pins 3_4, external pullups, 400kHz, 200ms default timeout
+    // Teensy sets 0x00 address, but does not matter as master
+    // originally from main.cpp
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
     Wire2.setDefaultTimeout(200000);
-    // TODO: not sure if the following loop *does* anything -- based on commented-out code, nothing seems to be set?
     // originally from pga309.cpp
-    for (uint8_t chan = 0; chan < constants::pin::n_channels; chan++)
-    {
-        MultiPGA::setChannel(chan);
-    }
-    // originally from main.cpp
-    MultiPGA::reset();
+    plex_device = cplex::plex_a_addr; // == targetPlex
+    plex_channel = 0x01; // == currPlex
     MultiPGA::setChannel(0);
 #endif
 }
 
-void MultiPGA::reset()
+void MultiPGA::enableChannel() // == switchPlex from tca9548a.cpp
 {
-    plex_device = cplex::plex_a_addr;
-    plex_channel = 0x01;
-}
-
-void MultiPGA::channelEnable()
-{
+    // TODO: this one isn't quite right -- rethink
     uint8_t reg_state = 0xFF;
     Wire2.beginTransmission(plex_device);
     Wire2.write(plex_channel);
@@ -52,11 +45,11 @@ void MultiPGA::clear()
     plex_device = cplex::plex_c_addr;
     uint8_t tmp_plex_channel = plex_channel;
     plex_channel = 0x00;
-    MultiPGA::channelEnable();
+    MultiPGA::enableChannel();
     plex_device = cplex::plex_b_addr;
-    MultiPGA::channelEnable();
+    MultiPGA::enableChannel();
     plex_device = cplex::plex_a_addr;
-    MultiPGA::channelEnable();
+    MultiPGA::enableChannel();
     plex_channel = tmp_plex_channel;
 }
 
@@ -64,10 +57,10 @@ void MultiPGA::setChannel(uint8_t chan)
 {
     MultiPGA::clear();
     int16_t pga_channel = chan % 8;
-    int16_t plex_channel = chan / 8;
+    int16_t xx = chan / 8; // Sorry about the name, not sure yet...
     plex_channel = 0x01 << pga_channel;
-    plex_device = cplex::plex_a_addr + plex_channel;
-    MultiPGA::channelEnable();
+    plex_device = cplex::plex_a_addr + xx;
+    MultiPGA::enableChannel();
 }
 
 uint8_t MultiPGA::getDevice()
