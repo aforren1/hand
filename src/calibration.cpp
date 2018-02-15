@@ -9,19 +9,19 @@
 namespace cpin = constants::pin;
 namespace ccalib = constants::calibration;
 
-int calibration::calibrateAllChannels(PGASettings &pga_settings, MultiPGA &multi_pga)
+int calibration::calibrateAllChannels(PGASettings &pga_settings)
 {
     for (int i = 0; i < 5; i++)
     {
         for (int j = 0; j < 4; j++)
         {
-            calibration::calibrateChannel(cpin::mux_pins_nested[i][j], pga_settings.gains_and_offsets[i][j], multi_pga);
+            calibration::calibrateChannel(cpin::mux_pins_nested[i][j], pga_settings.gains_and_offsets[i][j]);
         }
     }
     return 0;
 }
 
-int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec, MultiPGA &multi_pga)
+int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec)
 // 0th index is front gain, 1st index is fine gain, 2nd index is output gain, 3rd is product (not used here)
 {
     float desired_front_gain;
@@ -54,7 +54,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         // PART 1: Modify sensitivity
 
         // enable intended PGA channel
-        multi_pga.setChannel(mux_channel);
+        multipga::setChannel(mux_channel);
         desired_front_gain = gain_vec[0];
         desired_output_gain = gain_vec[2];
         float coarse_mv_max = ccalib::vcc * 14 * 0.85; // TODO: make const
@@ -71,7 +71,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         }
 
         float desired_coarse_offset = -error_mv;
-        uint16_t gain_cmsg = multi_pga.writePGA(0x04, desired_front_gain, desired_output_gain, desired_coarse_offset);
+        uint16_t gain_cmsg = multipga::writePGA(0x04, desired_front_gain, desired_output_gain, desired_coarse_offset);
         uint16_t coarse_multi = gain_cmsg & 0x000f;
         uint16_t coarse_sign = (gain_cmsg & 0x0010) >> 4;
         if (coarse_sign) // truthy
@@ -89,8 +89,8 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         float desired_fine_offset = (ccalib::target_fraction / (desired_fine_gain * desired_output_gain)) -
                                     desired_front_gain * excess_mv / (ccalib::mvcc);
         gain_vec[4] = desired_fine_offset;
-        offset_msg = multi_pga.writePGA(0x01, desired_fine_offset, 0, 0);
-        uint16_t fine_gain_msg = multi_pga.writePGA(0x02, desired_fine_gain, 0, 0);
+        offset_msg = multipga::writePGA(0x01, desired_fine_offset, 0, 0);
+        uint16_t fine_gain_msg = multipga::writePGA(0x02, desired_fine_gain, 0, 0);
     }
 
     // Now we do our fine adjustments
@@ -124,8 +124,8 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
             continue; // criterion met
         }
         gain_vec[5] += iter_step; // update fine offset
-        multi_pga.setChannel(mux_channel);
-        offset_msg = multi_pga.writePGA(0x01, gain_vec[5], 0, 0);
+        multipga::setChannel(mux_channel);
+        offset_msg = multipga::writePGA(0x01, gain_vec[5], 0, 0);
         // put pause here for settling?
     }
     if (iter < ccalib::max_fine_iter)

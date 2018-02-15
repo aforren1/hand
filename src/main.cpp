@@ -34,7 +34,6 @@ uint32_t timestamp = 0;                   ///< Stores the result of adc_data_tim
 elapsedMicros between_adc_readings_timer; ///< Used to time consecutive calls to readAllOnce
 int16_t deviation = 0;                    ///< deviation from the expected sampling period, in us
 
-MultiPGA multi_pga(settings.pga_settings);
 
 void setup()
 {
@@ -54,7 +53,9 @@ void setup()
     analog::setupADC();
 
 #ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
-    calibration::calibrateAllChannels(settings.pga_settings, multi_pga);
+    multipga::init();
+    calibration::calibrateAllChannels(settings.pga_settings);
+    // TODO: send settings to PGA
 #endif
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
@@ -91,6 +92,6 @@ void loop()
     comm_status = communication::receiveRawPacket(buffer_rx); // Check for any new messages from host
     if (comm_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
     {
-        ui::handleInput(is_sampling, buffer_rx, settings, multi_pga); // all args are pass by reference
+        ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }
 }

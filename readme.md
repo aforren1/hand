@@ -20,7 +20,7 @@ Notes:
  - Get local versions of all the req libs; we want to be independent of build systems
  - If a unit needs to maintain a state, it's implemented as a `struct`/`class`. Otherwise, we use a namespace.
    - analog, calibration, communication, constants, packing (TODO: finish) are examples of namespaces.
-   - multiplexer and settings use structs (multiplexer cares about the current selection).
+   - we use a struct for the settings.
  - On various Linux distributions, you'll need to run `sudo cp inst/49-teensy.rules /etc/udev/rules.d/49-teensy.rules` (see `inst/49-teensy.rules` for details).
 
 ## Commands:

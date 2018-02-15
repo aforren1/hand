@@ -16,8 +16,7 @@
 
 uint8_t last_err_code = 0;
 
-void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx,
-                     Settings &settings, MultiPGA &multi_pga)
+void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Settings &settings)
 {
     std::array<uint8_t, 64> buffer_tx;
     if (is_sampling)
@@ -114,8 +113,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx,
                     {
 #ifndef NOHARDWARE
                         calibration::calibrateChannel(constants::pin::mux_pins_nested[i][j],
-                                                      settings.pga_settings.gains_and_offsets[i][j],
-                                                      multi_pga);
+                                                      settings.pga_settings.gains_and_offsets[i][j]);
 #endif
                         settings.pga_settings_copy.gains_and_offsets[i][j] = settings.pga_settings.gains_and_offsets[i][j];
                     }
@@ -127,7 +125,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx,
         else if (buffer_rx[0] == 't') // Run calibration without moving to acquisition mode
         {
 #ifndef NOHARDWARE
-            calibration::calibrateAllChannels(settings.pga_settings, multi_pga);
+            calibration::calibrateAllChannels(settings.pga_settings);
 #endif
             settings.pga_settings_copy = settings.pga_settings;
         }

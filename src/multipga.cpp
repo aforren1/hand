@@ -5,7 +5,7 @@
 
 namespace cplex = constants::multiplex;
 
-MultiPGA::MultiPGA(PGASettings &pga_settings)
+void multipga::init()
 {
 #ifndef NOHARDWARE
     // Setup for Master mode, pins 3_4, external pullups, 400kHz, 200ms default timeout
@@ -15,12 +15,12 @@ MultiPGA::MultiPGA(PGASettings &pga_settings)
     Wire2.setDefaultTimeout(200000);
     // originally from pga309.cpp
     plex_device = cplex::plex_a_addr; // == targetPlex
-    plex_channel = 0x01; // == currPlex
-    MultiPGA::setChannel(0);
+    plex_channel = 0x01;              // == currPlex
+    multipga::setChannel(0);
 #endif
 }
 
-void MultiPGA::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
+void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
 {
     uint8_t reg_state = 0xFF;
     Wire2.beginTransmission(device);
@@ -40,25 +40,25 @@ void MultiPGA::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from 
     // TODO: let the user know if comm failed & such
 }
 
-void MultiPGA::clear() // == plexClear from tca9548a.cpp
+void multipga::clear() // == plexClear from tca9548a.cpp
 // TODO: Do we need to do this?
 {
-    MultiPGA::enableChannel(cplex::plex_c_addr, 0x00);
-    MultiPGA::enableChannel(cplex::plex_b_addr, 0x00);
-    MultiPGA::enableChannel(cplex::plex_a_addr, 0x00);
+    multipga::enableChannel(cplex::plex_c_addr, 0x00);
+    multipga::enableChannel(cplex::plex_b_addr, 0x00);
+    multipga::enableChannel(cplex::plex_a_addr, 0x00);
 }
 
-void MultiPGA::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
+void multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
 {
-    MultiPGA::clear();
+    multipga::clear();
     int16_t pga_channel = chan % 8;
     int16_t xx = chan / 8; // Sorry about the name, not sure yet...
     int8_t plex_channel = 0x01 << pga_channel;
-    MultiPGA::enableChannel(cplex::plex_a_addr + xx, plex_channel);
+    multipga::enableChannel(cplex::plex_a_addr + xx, plex_channel);
 }
 
 // start PGA methods
-void MultiPGA::accessRegister(uint8_t addr, bool is_read) // accessRegister in pga309.cpp
+void multipga::accessRegister(uint8_t addr, bool is_read) // accessRegister in pga309.cpp
 {
     // TODO: toggle builtin LED
     if (addr > 0x08)
@@ -68,12 +68,12 @@ void MultiPGA::accessRegister(uint8_t addr, bool is_read) // accessRegister in p
     // TODO: add messages back
     if (is_read)
     {
-        MultiPGA::readPGA(addr);
+        multipga::readPGA(addr);
     }
     // TODO: extra messages & potential handling of things?
 }
 
-uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
+uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
 {
     Wire2.beginTransmission(cplex::pga_addr);
     Wire2.write(addr);
@@ -85,7 +85,7 @@ uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3) //
     return raw_2byte;
 }
 
-void MultiPGA::readPGA(uint8_t addr)
+void multipga::readPGA(uint8_t addr)
 {
     uint8_t n_bytes;
     uint8_t redundancy_bytes = 5;
