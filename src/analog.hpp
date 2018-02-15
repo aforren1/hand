@@ -36,6 +36,8 @@ float readChannelMillivolt(uint8_t channel);
  * @return void
  */
 void applyRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values);
+
+void calcError(const std::array<uint16_t, 20> &recent_values, std::array<float, 5> &converted_values);
 };
 
 #endif

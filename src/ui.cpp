@@ -144,6 +144,14 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 communication::sendSample(0, 0, temp_data);
             }
         }
+        else if (buffer_rx[0] == 'e')
+        {
+            std::array<uint16_t, 20> temp_data;
+            std::array<float, 5> temp_err_data;
+            analog::readAllOnce(temp_data);
+            analog::calcError(temp_data, temp_err_data);
+            communication::sendSample(temp_err_data);
+        }
     }
     buffer_rx.fill(0);
 }

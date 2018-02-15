@@ -65,6 +65,10 @@ int receiveRawPacket(std::array<uint8_t, 64> &rx_data);
 void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 
 void sendString(std::string tx_string);
+
+void packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data);
+
+void sendSample(const std::array<float, 5> &err_sample);
 };
 
 #endif

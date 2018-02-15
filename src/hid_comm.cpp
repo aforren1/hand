@@ -29,6 +29,27 @@ void communication::sendSample(const std::array<float, 15> &game_sample)
     RawHID.send(tx_data.data(), 1);
 }
 
+// TODO: Below is a prime candidate for templates
+void communication::packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data)
+{
+    std::array<uint8_t, 4> flt_container;
+    unsigned int count = 0;
+    for (auto i : err_sample)
+    {
+        packing::num2bigendbytes<float>(i, flt_container);
+        std::copy_n(flt_container.begin(), flt_container.size(), tx_data.begin() + count);
+        count += 4;
+    }
+    // at this point, tx_data should have 60 bytes filled
+}
+
+void communication::sendSample(const std::array<float, 5> &err_sample)
+{
+    std::array<uint8_t, 64> tx_data;
+    communication::packErrSample(err_sample, tx_data);
+    RawHID.send(tx_data.data(), 1);
+}
+
 void communication::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
 {
     std::array<uint8_t, 4> long_container;
