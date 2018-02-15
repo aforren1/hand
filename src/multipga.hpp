@@ -5,15 +5,10 @@
 
 struct MultiPGA
 {
-    uint8_t plex_channel;
-    uint8_t plex_device;
-
     MultiPGA(PGASettings &pga_settings); // init method (start comm, feed in default settings)
-    uint8_t getDevice();                 // get the plex device the I2C master is on (== getPlexDevice)
-    uint8_t getChannel();                // get plex channel the I2C master is on (== getPlexChan)
     void setChannel(uint8_t channel);    // select single I2C channel across all multiplexers (== plexSelect)
     void clear();                        // clear all I2C channels across all multiplexers (== plexClear)
-    void enableChannel();                // sends channel enable message to multiplexer with target address (== switchPlex)
+    void enableChannel(uint8_t device, uint8_t msg);     // sends channel enable message to multiplexer with target address (== switchPlex)
     void plexTest();                     // haven't written yet (see old code)
 
     // originally from pga309.cpp

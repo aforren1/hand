@@ -20,62 +20,47 @@ MultiPGA::MultiPGA(PGASettings &pga_settings)
 #endif
 }
 
-void MultiPGA::enableChannel() // == switchPlex from tca9548a.cpp
+void MultiPGA::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
 {
-    // TODO: this one isn't quite right -- rethink
     uint8_t reg_state = 0xFF;
-    Wire2.beginTransmission(plex_device);
-    Wire2.write(plex_channel);
+    Wire2.beginTransmission(device);
+    Wire2.write(msg);
     Wire2.endTransmission();
 
-    Wire2.requestFrom(plex_device, 1, I2C_NOSTOP);
+    Wire2.requestFrom(device, 1, I2C_NOSTOP);
     while (Wire2.available())
     {
         reg_state = Wire2.readByte();
     }
 
-    if (reg_state == plex_channel)
+    if (reg_state == msg)
     {
         // TODO: send message?
     }
+    // TODO: let the user know if comm failed & such
 }
 
-void MultiPGA::clear()
+void MultiPGA::clear() // == plexClear from tca9548a.cpp
+// TODO: Do we need to do this?
 {
-    plex_device = cplex::plex_c_addr;
-    uint8_t tmp_plex_channel = plex_channel;
-    plex_channel = 0x00;
-    MultiPGA::enableChannel();
-    plex_device = cplex::plex_b_addr;
-    MultiPGA::enableChannel();
-    plex_device = cplex::plex_a_addr;
-    MultiPGA::enableChannel();
-    plex_channel = tmp_plex_channel;
+    MultiPGA::enableChannel(cplex::plex_c_addr, 0x00);
+    MultiPGA::enableChannel(cplex::plex_b_addr, 0x00);
+    MultiPGA::enableChannel(cplex::plex_a_addr, 0x00);
 }
 
-void MultiPGA::setChannel(uint8_t chan)
+void MultiPGA::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
 {
     MultiPGA::clear();
     int16_t pga_channel = chan % 8;
     int16_t xx = chan / 8; // Sorry about the name, not sure yet...
-    plex_channel = 0x01 << pga_channel;
-    plex_device = cplex::plex_a_addr + xx;
-    MultiPGA::enableChannel();
-}
-
-uint8_t MultiPGA::getDevice()
-{
-    return plex_device;
-}
-
-uint8_t MultiPGA::getChannel()
-{
-    return plex_channel;
+    int8_t plex_channel = 0x01 << pga_channel;
+    MultiPGA::enableChannel(cplex::plex_a_addr + xx, plex_channel);
 }
 
 // start PGA methods
-void MultiPGA::accessRegister(uint8_t addr, bool is_read)
+void MultiPGA::accessRegister(uint8_t addr, bool is_read) // accessRegister in pga309.cpp
 {
+    // TODO: toggle builtin LED
     if (addr > 0x08)
     {
         addr = 0x08;
@@ -85,9 +70,10 @@ void MultiPGA::accessRegister(uint8_t addr, bool is_read)
     {
         MultiPGA::readPGA(addr);
     }
+    // TODO: extra messages & potential handling of things?
 }
 
-uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3)
+uint16_t MultiPGA::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
 {
     Wire2.beginTransmission(cplex::pga_addr);
     Wire2.write(addr);
@@ -112,6 +98,7 @@ void MultiPGA::readPGA(uint8_t addr)
         n_bytes = Wire2.available();
         while (Wire2.available())
         {
+            // Note: tried to back in reverse order, so we can use the packing machinery
             temp_byte_holder[0] = Wire2.readByte();
             temp_byte_holder[1] = Wire2.readByte();
         }
@@ -121,12 +108,12 @@ void MultiPGA::readPGA(uint8_t addr)
     {
         uint16_t count = packing::bigendbytes2num<uint16_t>(temp_byte_holder); //TODO: sanity check?
         float temperature = 0.0625 * count;
-        // send temperature message
+        // TODO: send temperature message
     }
     else
     {
         uint16_t error_code = packing::bigendbytes2num<uint16_t>(temp_byte_holder);
-        // send error code somewhere
+        // TODO: send error code somewhere
     }
 }
 
@@ -141,6 +128,12 @@ uint16_t fineOffset2Hex(float fine_offset)
     return fine_offset * constants::adc::max_int;
 }
 
+/**
+*   @brief  Computes setting hex needed to represent intended fine gain
+*
+*   @param fine_gain Desired fine gain
+*   @return Resulting 16-bit hex value for setting and value
+**/
 uint16_t fineGain2Hex(float fine_gain)
 {
     return (fine_gain - 0.33333333) * 1.5 * constants::adc::max_int;
@@ -148,6 +141,15 @@ uint16_t fineGain2Hex(float fine_gain)
 
 // TODO: Implement refCtrlLinear from Jacob's code
 
+/**
+*   @brief  Computes setting hex needed to represent intended front-end and output gains, and coarse offset
+*
+*   @param des_front_gain Desired front-end gain
+*   @param des_output_gain Desired output gain
+*   @param des_coarse_offset Desired coarse offset
+*   @return Resulting 16-bit hex value for setting and value
+*   @todo Tables have been omitted for brevity, but we can link to the source?
+**/
 uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float des_coarse_offset)
 {
     uint8_t owd = 0x01;
@@ -188,7 +190,7 @@ uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float d
 // TODO: implement OutEnableCounterCtrl from Jacob's code
 // NOTE: tempConvert has been replaced
 
-uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3)
+uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3) // writeSelect in pga309.cpp
 {
     uint16_t write_msg = 0x0000;
     switch (addr)
