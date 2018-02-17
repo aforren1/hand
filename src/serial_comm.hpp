@@ -51,7 +51,8 @@ void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 /**
  * @brief Send a std::string to the host.
  *
- * @param tx_string is a std::string of length <= 64. We take care of padding to length 64 before sending.
+ * @param tx_string is a std::string of length <= 64.
+ * @note We take care of padding to length 64 before sending (spaces and a newline).
  */
 void sendString(std::string tx_string);
 
