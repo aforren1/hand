@@ -55,3 +55,14 @@ void communication::sendString(std::string tx_string)
 {
     Serial.write(tx_string.append(64 - tx_string.length(), ' ').c_str(), 64);
 }
+
+void communication::sendSample(const std::array<float, 5> &err_sample)
+{
+    for (const auto &i : err_sample)
+    {
+        Serial.print(i);
+        Serial.print(' ');
+    }
+    Serial.print('\n');
+    Serial.send_now();
+}

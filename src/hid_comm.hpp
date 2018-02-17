@@ -62,12 +62,41 @@ void sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> 
  */
 int receiveRawPacket(std::array<uint8_t, 64> &rx_data);
 
+/**
+ * @brief Send a prepared packet to the host.
+ * 
+ * @param tx_data is a reference to a std::array (the outgoing USB packet).
+ */
 void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 
+/**
+ * @brief Send a std::string to the host.
+ * 
+ * @param tx_string is a std::string of length <= 64. We take care of padding to length 64 before sending.
+ */
 void sendString(std::string tx_string);
 
+/**
+ * @brief Stores the error sample as a series of bytes (uint8_t) for transfer to the host.
+ *
+ * @param err_sample is a reference to a std::array of type float and length 5 (prepared by analog::calcError)
+ * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
+ * @return void
+ * 
+ * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
+ * @note This function ends up handling endianness issues via packing::num2bigendbytes.
+ */
 void packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data);
 
+/**
+ * @brief Sends a raw sample to the host.
+ *
+ * @param err_sample is a reference to a std::array of type uint16_t and length 5, which contains the error sample.
+ * @return void
+ *
+ * @note Error is calculated per-finger as abs(v[0] - v[1] + v[2] - v[3]), where v is an array of voltages.
+ * @note This quantity is primarily used for debugging.
+ */
 void sendSample(const std::array<float, 5> &err_sample);
 };
 
