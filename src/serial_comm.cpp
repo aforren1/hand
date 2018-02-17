@@ -53,7 +53,10 @@ void communication::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 
 void communication::sendString(std::string tx_string)
 {
-    Serial.write(tx_string.append(64 - tx_string.length(), ' ').c_str(), 64);
+    tx_string.append(63 - tx_string.length(), ' ');
+    tx_string.append("\n");
+    Serial.write(tx_string.c_str(), 64);
+    Serial.send_now();
 }
 
 void communication::sendString(std::string string_1, std::string string_2)

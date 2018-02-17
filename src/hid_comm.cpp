@@ -88,7 +88,9 @@ void communication::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 
 void communication::sendString(std::string tx_string)
 {
-    RawHID.send(tx_string.append(64 - tx_string.length(), ' ').c_str(), 0);
+    tx_string.append(63 - tx_string.length(), ' ');
+    tx_string.append("\n");
+    RawHID.send(tx_string.c_str(), 0);
 }
 
 void communication::sendString(std::string string_1, std::string string_2)
