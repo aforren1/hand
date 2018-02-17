@@ -56,6 +56,15 @@ void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 void sendString(std::string tx_string);
 
 /**
+ * @brief Concatenates two std::strings and sends to the host.
+ *
+ * @param string_1 First string.
+ * @param string_2 second string.
+ * @note communication::sendString("Optimization level ", std::to_string(3));
+ */
+void sendString(std::string string_1, std::string string_2);
+
+/**
  * @brief Sends a raw sample to the host.
  *
  * @param err_sample is a reference to a std::array of type uint16_t and length 5, which contains the error sample.
