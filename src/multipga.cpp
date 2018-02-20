@@ -14,8 +14,8 @@ void multipga::init()
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
     Wire2.setDefaultTimeout(200000);
     // originally from pga309.cpp
-    plex_device = cplex::plex_a_addr; // == targetPlex
-    plex_channel = 0x01;              // == currPlex
+    //plex_device = cplex::plex_a_addr; // == targetPlex
+    //plex_channel = 0x01;              // == currPlex
     multipga::setChannel(0);
 #endif
 }
