@@ -7,12 +7,7 @@
 #include "constants.hpp"
 #include "multipga.hpp"
 #include "analog.hpp"
-
-#if USB_RAWHID
-#include "hid_comm.hpp"
-#else
-#include "serial_comm.hpp"
-#endif
+#include "comm.hpp"
 
 uint8_t last_err_code = 0;
 
@@ -43,11 +38,6 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 uint8_t val = buffer_rx[2];
                 last_err_code = settings.setGameMode(val);
             }
-            else if (buffer_rx[1] == 'v') // verbosity
-            {
-                uint8_t val = buffer_rx[2];
-                last_err_code = settings.setVerbosity(val);
-            }
             else if (buffer_rx[1] == 'g') // gain
             {
                 // first byte is the finger (-1 for all fingers)
@@ -71,19 +61,13 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 std::array<uint8_t, 4> flt_container;
                 packing::num2bigendbytes(freq, flt_container);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
-                communication::sendRawPacket(buffer_tx);
+                comm::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'm') // game mode
             {
                 bool mode = settings.getGameMode();
                 buffer_tx[0] = mode;
-                communication::sendRawPacket(buffer_tx);
-            }
-            else if (buffer_rx[1] == 'v') // verbosity
-            {
-                bool verbosity = settings.getVerbosity();
-                buffer_tx[0] = verbosity;
-                communication::sendRawPacket(buffer_tx);
+                comm::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'g') // gain
             {
@@ -94,12 +78,12 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 std::array<uint8_t, 4> flt_container;
                 packing::num2bigendbytes(gain, flt_container);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
-                communication::sendRawPacket(buffer_tx);
+                comm::sendRawPacket(buffer_tx);
             }
             else if (buffer_rx[1] == 'e') // last error
             {
                 buffer_tx[0] = last_err_code;
-                communication::sendRawPacket(buffer_tx);
+                comm::sendRawPacket(buffer_tx);
             }
         }
         else if (buffer_rx[0] == 'a') // change to acquisition mode
@@ -137,11 +121,11 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             {
                 std::array<float, 15> temp_rot_data;
                 analog::applyRotation(temp_data, temp_rot_data);
-                communication::sendSample(temp_rot_data);
+                comm::sendSample(temp_rot_data);
             }
             else
             {
-                communication::sendSample(0, 0, temp_data);
+                comm::sendSample(0, 0, temp_data);
             }
         }
         else if (buffer_rx[0] == 'e')
@@ -150,7 +134,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             std::array<float, 5> temp_err_data;
             analog::readAllOnce(temp_data);
             analog::calcError(temp_data, temp_err_data);
-            communication::sendSample(temp_err_data);
+            comm::sendSample(temp_err_data);
         }
     }
     buffer_rx.fill(0);

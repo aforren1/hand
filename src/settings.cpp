@@ -2,11 +2,10 @@
 #include "settings.hpp"
 #include <algorithm>
 
-Settings::Settings(float sampling_frequency, bool game, bool verbose)
+Settings::Settings(float sampling_frequency, bool game)
 {
     setSamplingFrequency(sampling_frequency);
     game_mode = game;
-    verbosity = verbose;
 }
 
 uint8_t Settings::setSamplingFrequency(float sampling_frequency)
@@ -35,17 +34,6 @@ uint8_t Settings::setGameMode(bool game)
 bool Settings::getGameMode()
 {
     return game_mode;
-}
-
-uint8_t Settings::setVerbosity(bool verbose)
-{
-    verbosity = verbose;
-    return 0;
-}
-
-bool Settings::getVerbosity()
-{
-    return verbosity;
 }
 
 uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)

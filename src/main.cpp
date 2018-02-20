@@ -6,12 +6,7 @@
 #include "multipga.hpp"
 #include "calibration.hpp"
 #include "ui.hpp"
-
-#if USB_RAWHID
-#include "hid_comm.hpp"
-#else
-#include "serial_comm.hpp"
-#endif
+#include "comm.hpp"
 
 // Required for using the standard library, unclear why
 extern "C" {
@@ -25,7 +20,7 @@ std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 
 uint8_t comm_status = 0;                       ///< HID communication status
 bool is_sampling = false;                      ///< false is settings, true is sampling
-Settings settings(100, false, false);          // default to 100 hz, "raw" mode, verbosity off
+Settings settings(100, false);                 // default to 100 hz, "raw" mode, verbosity off
 std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
 std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through applyRotation
 
@@ -33,7 +28,6 @@ elapsedMillis adc_data_timestamp;         ///< Time at the start of acquisition 
 uint32_t timestamp = 0;                   ///< Stores the result of adc_data_timestamp (which runs away)
 elapsedMicros between_adc_readings_timer; ///< Used to time consecutive calls to readAllOnce
 int16_t deviation = 0;                    ///< deviation from the expected sampling period, in us
-
 
 void setup()
 {
@@ -49,7 +43,7 @@ void setup()
     digitalWrite(LED_BUILTIN, LOW);
     digitalWrite(constants::pin::led_for_calibration, LOW);
     digitalWrite(constants::pin::led_for_adc, LOW);
-    communication::initComm(); // Only does something if Serial is being used (HID needs no init)
+    comm::setupComm(); // Only does something if Serial is being used (HID needs no init)
     analog::setupADC();
 
 #ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
@@ -79,18 +73,18 @@ void loop()
         if (settings.getGameMode())
         {                                                                  // if in "game" mode, perform rotation and send data
             analog::applyRotation(recent_values, converted_recent_values); // TODO: move applyRotation somewhere more appropriate
-            communication::sendSample(converted_recent_values);
+            comm::sendSample(converted_recent_values);
         }
         else
         { // send data immediately
-            communication::sendSample(timestamp, deviation, recent_values);
+            comm::sendSample(timestamp, deviation, recent_values);
         }
     }
     // check for data *after* read, so the time it takes to do that
     // is folded into the busy wait
     // if there is a new message, our timing will be borked anyway
-    comm_status = communication::receiveRawPacket(buffer_rx); // Check for any new messages from host
-    if (comm_status > 0)                                 // Deal with parsing apart the message and evaluate state changes
+    comm_status = comm::receiveRawPacket(buffer_rx); // Check for any new messages from host
+    if (comm_status > 0)                             // Deal with parsing apart the message and evaluate state changes
     {
         ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }

@@ -5,11 +5,11 @@
 #include <array>
 #include <algorithm>
 #include <string>
-#include "hid_comm.hpp"
+#include "comm.hpp"
 
-void communication::initComm() {}
+void comm::setupComm() {}
 
-void communication::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
+void comm::packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data)
 {
     std::array<uint8_t, 4> flt_container;
     unsigned int count = 0;
@@ -22,15 +22,15 @@ void communication::packGameSample(const std::array<float, 15> &game_sample, std
     // at this point, tx_data should have 60 bytes filled
 }
 
-void communication::sendSample(const std::array<float, 15> &game_sample)
+void comm::sendSample(const std::array<float, 15> &game_sample)
 {
     std::array<uint8_t, 64> tx_data;
-    communication::packGameSample(game_sample, tx_data);
+    comm::packGameSample(game_sample, tx_data);
     RawHID.send(tx_data.data(), 1);
 }
 
 // TODO: Below is a prime candidate for templates
-void communication::packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data)
+void comm::packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data)
 {
     std::array<uint8_t, 4> flt_container;
     unsigned int count = 0;
@@ -43,14 +43,14 @@ void communication::packErrSample(const std::array<float, 5> &err_sample, std::a
     // at this point, tx_data should have 60 bytes filled
 }
 
-void communication::sendSample(const std::array<float, 5> &err_sample)
+void comm::sendSample(const std::array<float, 5> &err_sample)
 {
     std::array<uint8_t, 64> tx_data;
-    communication::packErrSample(err_sample, tx_data);
+    comm::packErrSample(err_sample, tx_data);
     RawHID.send(tx_data.data(), 1);
 }
 
-void communication::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
+void comm::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)
 {
     std::array<uint8_t, 4> long_container;
     std::array<uint8_t, 2> int_container;
@@ -68,33 +68,34 @@ void communication::packRawSample(uint32_t timestamp, int16_t deviation, const s
     // should have 46 bytes filled by now
 }
 
-void communication::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample)
+void comm::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample)
 {
     std::array<uint8_t, 64> tx_data;
-    communication::packRawSample(timestamp, deviation, raw_sample, tx_data);
+    comm::packRawSample(timestamp, deviation, raw_sample, tx_data);
     RawHID.send(tx_data.data(), 1);
 }
 
-int communication::receiveRawPacket(std::array<uint8_t, 64> &rx_data)
+int comm::receiveRawPacket(std::array<uint8_t, 64> &rx_data)
 {
     int code = RawHID.recv(rx_data.data(), 0);
     return code;
 }
 
-void communication::sendRawPacket(std::array<uint8_t, 64> &tx_data)
+void comm::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 {
     RawHID.send(tx_data.data(), 1);
 }
 
-void communication::sendString(std::string tx_string)
+void comm::sendString(std::string tx_string)
 {
     tx_string.append(63 - tx_string.length(), ' ');
     tx_string.append("\n");
-    RawHID.send(tx_string.c_str(), 0);
+    Serial.write(tx_string.c_str(), 64);
+    Serial.send_now();
 }
 
-void communication::sendString(std::string string_1, std::string string_2)
+void comm::sendString(std::string string_1, std::string string_2)
 {
     std::string x = string_1 + string_2;
-    communication::sendString(x);
+    comm::sendString(x);
 }

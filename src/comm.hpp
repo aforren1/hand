@@ -2,7 +2,7 @@
 #define COMM_H
 #include <array>
 
-namespace communication
+namespace comm
 {
 /**
  * @brief Initialize the communication method.
@@ -11,16 +11,38 @@ namespace communication
  * 
  * @note not always necessary (e.g. for HID version)
  */
-void initComm();
+void setupComm();
+
+/**
+ * @brief Stores the game sample as a series of bytes (uint8_t) for transfer to the host.
+ * 
+ * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::applyRotation)
+ * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
+ * @return void
+ * 
+ * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
+ * @note This function ends up handling endianness issues via packing::num2bigendbytes.
+ */
+void packGameSample(const std::array<float, 15> &game_sample, std::array<uint8_t, 64> &tx_data);
 
 /**
  * @brief Sends a game sample to the host.
  * 
  * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::applyRotation)
- * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
  * @return void
  */
 void sendSample(const std::array<float, 15> &game_sample);
+
+/**
+ * @brief Stores the raw sample as a series of bytes (uint8_t) for transfer to the host.
+ * 
+ * @param uint32_t timestamp is the time since the device powered on, in milliseconds.
+ * @param int16_t deviation is the deviation from the expected sampling period, in microseconds.
+ * @param raw_sample is a reference to a std::array of type uint16_t and length 20, which contains the "raw" (untransformed) analog readings.
+ * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
+ * @return void
+ */
+void packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data);
 
 /**
  * @brief Sends a raw sample to the host.
@@ -28,7 +50,6 @@ void sendSample(const std::array<float, 15> &game_sample);
  * @param uint32_t timestamp is the time since the device powered on, in milliseconds.
  * @param int16_t deviation is the deviation from the expected sampling period, in microseconds.
  * @param raw_sample is a reference to a std::array of type uint16_t and length 20, which contains the "raw" (untransformed) analog readings.
- * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
  * @return void
  */
 void sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t, 20> &raw_sample);
@@ -43,14 +64,14 @@ int receiveRawPacket(std::array<uint8_t, 64> &rx_data);
 
 /**
  * @brief Send a prepared packet to the host.
- *
+ * 
  * @param tx_data is a reference to a std::array (the outgoing USB packet).
  */
 void sendRawPacket(std::array<uint8_t, 64> &tx_data);
 
 /**
  * @brief Send a std::string to the host.
- *
+ * 
  * @param tx_string is a std::string of length <= 64.
  * @note We take care of padding to length 64 before sending (spaces and a newline).
  */
@@ -61,9 +82,21 @@ void sendString(std::string tx_string);
  *
  * @param string_1 First string.
  * @param string_2 second string.
- * @note communication::sendString("Optimization level ", std::to_string(3));
+ * @note comm::sendString("Optimization level ", std::to_string(3));
  */
 void sendString(std::string string_1, std::string string_2);
+
+/**
+ * @brief Stores the error sample as a series of bytes (uint8_t) for transfer to the host.
+ *
+ * @param err_sample is a reference to a std::array of type float and length 5 (prepared by analog::calcError)
+ * @param tx_data is a reference to a std::array of type uint8_t and length 64 (the outgoing USB packet).
+ * @return void
+ * 
+ * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
+ * @note This function ends up handling endianness issues via packing::num2bigendbytes.
+ */
+void packErrSample(const std::array<float, 5> &err_sample, std::array<uint8_t, 64> &tx_data);
 
 /**
  * @brief Sends a raw sample to the host.
@@ -75,6 +108,6 @@ void sendString(std::string string_1, std::string string_2);
  * @note This quantity is primarily used for debugging.
  */
 void sendSample(const std::array<float, 5> &err_sample);
-};
+}
 
 #endif

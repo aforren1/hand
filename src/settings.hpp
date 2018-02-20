@@ -31,7 +31,6 @@ struct Settings
     float sampling_period_s;          ///< sampling_period_s is 1 / sampling_frequency_hz
     unsigned long sampling_period_us; ///< sampling_period_us is sampling_period_s * 1000000, the sampling period in microseconds
     bool game_mode;                   ///< Whether to precompute the x, y, z per finger. Note that this changes the composition of the data packet.
-    bool verbosity;                   ///< Whether to push messages during calibration, etc.
     PGASettings pga_settings;         ///< Manages the programmable gain amplifier settings
     PGASettings pga_settings_copy;    ///< Copy of the settings, used to infer which channels to recalibrate
     // TODO: add ADC averaging, resolution to settings?
@@ -43,7 +42,7 @@ struct Settings
      * @param game_mode if true, the channel transformation to cartesian coordinates takes place on the Teensy
      * @param verbosity determines whether unsolicited debugging messages will be sent to the user.
      */
-    Settings(float sampling_frequency_hz, bool game_mode, bool verbosity);
+    Settings(float sampling_frequency_hz, bool game_mode);
     /**
      * @brief sets the sampling frequency, in hertz.
      * 
@@ -68,18 +67,6 @@ struct Settings
      * @return 0
      */
     bool getGameMode();
-    /**
-     * @brief sets the verbosity level.
-     * 
-     * @param verbosity determines whether unsolicited debugging messages will be sent to the user.
-     */
-    uint8_t setVerbosity(bool verbosity);
-    /**
-     * @brief get the current verbosity level.
-     * 
-     * @return 0
-     */
-    bool getVerbosity();
     /**
      * @brief change one or more of the gain settings.
      * 
