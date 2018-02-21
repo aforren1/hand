@@ -1,27 +1,29 @@
+#include <string>
 #include "constants.hpp"
 #include "multipga.hpp"
 #include "i2c_t3.h"
 #include "packing.hpp"
+#include "comm.hpp"
+
 
 namespace cplex = constants::multiplex;
 
 void multipga::init()
 {
-#ifndef NOHARDWARE
     // Setup for Master mode, pins 3_4, external pullups, 400kHz, 200ms default timeout
     // Teensy sets 0x00 address, but does not matter as master
     // originally from main.cpp
     Wire2.begin(I2C_MASTER, 0x00, I2C_PINS_3_4, I2C_PULLUP_EXT, 400000);
-    Wire2.setDefaultTimeout(200000);
+    Wire2.setDefaultTimeout(200000); // 200 ms
     // originally from pga309.cpp
     //plex_device = cplex::plex_a_addr; // == targetPlex
     //plex_channel = 0x01;              // == currPlex
     multipga::setChannel(0);
-#endif
 }
 
 void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
 {
+    comm::sendString("Device: ", std::to_string(device));
     uint8_t reg_state = 0xFF;
     Wire2.beginTransmission(device);
     Wire2.write(msg);

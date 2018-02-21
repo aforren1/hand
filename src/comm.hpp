@@ -1,6 +1,7 @@
 #ifndef COMM_H
 #define COMM_H
 #include <array>
+#include "string_hack.hpp" // provide std::to_string wherever comm is used
 
 namespace comm
 {
