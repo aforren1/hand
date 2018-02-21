@@ -1,12 +1,12 @@
 #include <Arduino.h>
 #include <array>
 #include "constants.hpp"
+#include "comm.hpp"
 #include "settings.hpp"
 #include "analog.hpp"
 #include "multipga.hpp"
 #include "calibration.hpp"
 #include "ui.hpp"
-#include "comm.hpp"
 
 // Required for using the standard library, unclear why
 extern "C" {
