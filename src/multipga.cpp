@@ -61,6 +61,7 @@ void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from 
 
 void multipga::clear() // == plexClear from tca9548a.cpp
 {
+    comm::sendString("Clearing PLEX.");
     multipga::enableChannel(cplex::plex_c_addr, 0x00);
     multipga::enableChannel(cplex::plex_b_addr, 0x00);
     multipga::enableChannel(cplex::plex_a_addr, 0x00);
@@ -76,6 +77,7 @@ void multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
 }
 
 // start PGA methods
+// TODO: check if this does anything?
 void multipga::accessRegister(uint8_t addr, bool is_read) // accessRegister in pga309.cpp
 {
     // TODO: toggle builtin LED
