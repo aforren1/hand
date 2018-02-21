@@ -85,6 +85,29 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 buffer_tx[0] = last_err_code;
                 comm::sendRawPacket(buffer_tx);
             }
+            else if (buffer_rx[1] == 'd') // single data
+            {
+                std::array<uint16_t, 20> temp_data;
+                analog::readAllOnce(temp_data);
+                if (settings.getGameMode())
+                {
+                    std::array<float, 15> temp_rot_data;
+                    analog::applyRotation(temp_data, temp_rot_data);
+                    comm::sendSample(temp_rot_data);
+                }
+                else
+                {
+                    comm::sendSample(0, 0, temp_data);
+                }
+            }
+            else if (buffer_rx[1] == 'v') // error value per finger
+            {
+                std::array<uint16_t, 20> temp_data;
+                std::array<float, 5> temp_err_data;
+                analog::readAllOnce(temp_data);
+                analog::calcError(temp_data, temp_err_data);
+                comm::sendSample(temp_err_data);
+            }
         }
         else if (buffer_rx[0] == 'a') // change to acquisition mode
         {
@@ -112,29 +135,6 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             calibration::calibrateAllChannels(settings.pga_settings);
 #endif
             settings.pga_settings_copy = settings.pga_settings;
-        }
-        else if (buffer_rx[0] == 'd') // single data
-        {
-            std::array<uint16_t, 20> temp_data;
-            analog::readAllOnce(temp_data);
-            if (settings.getGameMode())
-            {
-                std::array<float, 15> temp_rot_data;
-                analog::applyRotation(temp_data, temp_rot_data);
-                comm::sendSample(temp_rot_data);
-            }
-            else
-            {
-                comm::sendSample(0, 0, temp_data);
-            }
-        }
-        else if (buffer_rx[0] == 'e')
-        {
-            std::array<uint16_t, 20> temp_data;
-            std::array<float, 5> temp_err_data;
-            analog::readAllOnce(temp_data);
-            analog::calcError(temp_data, temp_err_data);
-            comm::sendSample(temp_err_data);
         }
     }
     buffer_rx.fill(0);

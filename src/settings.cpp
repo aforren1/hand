@@ -39,6 +39,9 @@ bool Settings::getGameMode()
 uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)
 {
     // check indexing
+    // Note that any channel other than -1 is disallowed; in the future, it *could* be possible
+    // to allow different gains per channel, but I think the practicality is limited.
+    // TODO: Should we nix allowing channel to be used ever?
     if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || slot < 0 || slot > 3)
     {
         return 1;

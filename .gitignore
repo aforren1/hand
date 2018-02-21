@@ -7,3 +7,5 @@ docs/
 doc/
 .vscode/c_cpp_properties.json
 .vscode/launch.json
+test-cppcheck-build-dir/
+test.cppcheck

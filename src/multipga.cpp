@@ -78,7 +78,7 @@ uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) //
     Wire2.beginTransmission(cplex::pga_addr);
     Wire2.write(addr);
     int16_t raw_2byte = writeSelect(addr, val1, val2, val3);
-    uint8_t write_array[2];
+    uint8_t write_array[2] = {0, 0};
     memcpy(&raw_2byte, write_array, 2);
     Wire2.write(write_array, 2);
     Wire2.endTransmission();
