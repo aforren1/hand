@@ -1,3 +1,5 @@
+#ifndef STRINGHACK_H
+#define STRINGHACK_H
 #include <string>
 #include <sstream>
 
@@ -12,3 +14,5 @@ std::string to_string(const T &n)
     return stm.str();
 }
 }
+
+#endif

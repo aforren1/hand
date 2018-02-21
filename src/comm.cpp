@@ -26,7 +26,7 @@ void comm::sendSample(const std::array<float, 15> &game_sample)
 {
     std::array<uint8_t, 64> tx_data;
     comm::packGameSample(game_sample, tx_data);
-    RawHID.send(tx_data.data(), 1);
+    RawHID.send(tx_data.data(), 0);
 }
 
 // TODO: Below is a prime candidate for templates
@@ -47,7 +47,7 @@ void comm::sendSample(const std::array<float, 5> &err_sample)
 {
     std::array<uint8_t, 64> tx_data;
     comm::packErrSample(err_sample, tx_data);
-    RawHID.send(tx_data.data(), 1);
+    RawHID.send(tx_data.data(), 0);
 }
 
 void comm::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample, std::array<uint8_t, 64> &tx_data)

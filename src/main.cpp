@@ -35,6 +35,7 @@ bool loop_led_status = false; // BUILTIN_LED blinks when data is being acquired
 void setup()
 {
     comm::setupComm();
+    delay(200);
     comm::sendString("Beginning setup.");
     // put all the analog pins in INPUT mode
     for (const auto &pin : constants::pin::sensor_pins)

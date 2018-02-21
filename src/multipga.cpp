@@ -5,7 +5,6 @@
 #include "packing.hpp"
 #include "comm.hpp"
 
-
 namespace cplex = constants::multiplex;
 
 void multipga::init()
@@ -24,6 +23,7 @@ void multipga::init()
 void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
 {
     comm::sendString("Device: ", std::to_string(device));
+    comm::sendString("Message: ", std::to_string(msg));
     uint8_t reg_state = 0xFF;
     Wire2.beginTransmission(device);
     Wire2.write(msg);
