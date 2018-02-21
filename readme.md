@@ -22,6 +22,8 @@ Notes:
    - analog, calibration, communication, constants, packing (TODO: finish) are examples of namespaces.
    - we use a struct for the settings.
  - On various Linux distributions, you'll need to run `sudo cp inst/49-teensy.rules /etc/udev/rules.d/49-teensy.rules` (see `inst/49-teensy.rules` for details).
+ - Keep in mind that some number of packets are buffered on the Teensy/by the OS(?). You may need to clean out stale packets when switching between acquisition/config mode. In one example, 64 packets were buffered.
+ - When writing to the device via HIDAPI on Windows (or at least the python interface), the first byte is the report ID (which I think is 0x0?). For example, to query the sampling frequency, you would send `b'\x00gf'`, not `b'gf'`. 
 
 ## Commands:
 

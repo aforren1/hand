@@ -72,7 +72,7 @@ void comm::sendSample(uint32_t timestamp, int16_t deviation, std::array<uint16_t
 {
     std::array<uint8_t, 64> tx_data;
     comm::packRawSample(timestamp, deviation, raw_sample, tx_data);
-    RawHID.send(tx_data.data(), 1);
+    RawHID.send(tx_data.data(), 0);
 }
 
 int comm::receiveRawPacket(std::array<uint8_t, 64> &rx_data)

@@ -18,9 +18,9 @@ int _write() { return -1; }
 // "global" things
 std::array<uint8_t, 64> buffer_rx; // uint8_t == "byte"
 
-uint8_t comm_status = 0;                       ///< HID communication status
-bool is_sampling = false;                      ///< false is settings, true is sampling
-Settings settings(100, false);                 // default to 100 hz, "raw" mode, verbosity off
+int comm_status = 0;                           ///< HID communication status
+bool is_sampling = true;                       ///< false is settings, true is sampling
+Settings settings(100, false);                 // default to 100 hz, "raw" mode
 std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
 std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through applyRotation
 
@@ -28,6 +28,9 @@ elapsedMillis adc_data_timestamp;         ///< Time at the start of acquisition 
 uint32_t timestamp = 0;                   ///< Stores the result of adc_data_timestamp (which runs away)
 elapsedMicros between_adc_readings_timer; ///< Used to time consecutive calls to readAllOnce
 int16_t deviation = 0;                    ///< deviation from the expected sampling period, in us
+elapsedMillis loop_led_timer;             ///< Timer used to control rate of blinking by the LED during loop()
+
+bool loop_led_status = false; // BUILTIN_LED blinks when data is being acquired
 
 void setup()
 {
@@ -40,10 +43,10 @@ void setup()
     pinMode(constants::pin::led_for_calibration, OUTPUT); // Toggle calibration LED
     pinMode(constants::pin::led_for_adc, OUTPUT);         // Toggle ADC LED
     // Ensure LEDs are off by default
-    digitalWrite(LED_BUILTIN, LOW);
-    digitalWrite(constants::pin::led_for_calibration, LOW);
-    digitalWrite(constants::pin::led_for_adc, LOW);
-    comm::setupComm(); // Only does something if Serial is being used (HID needs no init)
+    digitalWriteFast(LED_BUILTIN, LOW);
+    digitalWriteFast(constants::pin::led_for_calibration, LOW);
+    digitalWriteFast(constants::pin::led_for_adc, LOW);
+    comm::setupComm();
     analog::setupADC();
 
 #ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
@@ -78,6 +81,12 @@ void loop()
         else
         { // send data immediately
             comm::sendSample(timestamp, deviation, recent_values);
+        }
+        if (loop_led_timer >= 500) // toggle builtin LED every 500 ms (500 on, 500 off, ...)
+        {
+            loop_led_timer = 0;
+            loop_led_status = !loop_led_status;
+            digitalWriteFast(LED_BUILTIN, loop_led_status);
         }
     }
     // check for data *after* read, so the time it takes to do that
