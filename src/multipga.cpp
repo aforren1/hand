@@ -1,4 +1,5 @@
 #include <string>
+#include <array>
 #include "constants.hpp"
 #include "multipga.hpp"
 #include "i2c_t3.h"
@@ -6,6 +7,20 @@
 #include "comm.hpp"
 
 namespace cplex = constants::multiplex;
+
+std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped states
+                                          "I2C_TIMEOUT",   //  |
+                                          "I2C_ADDR_NAK",  //  |
+                                          "I2C_DATA_NAK",  //  |
+                                          "I2C_ARB_LOST",  //  |
+                                          "I2C_BUF_OVF",   //  |
+                                          "I2C_NOT_ACQ",   //  |
+                                          "I2C_DMA_ERR",   //  V
+                                          "I2C_SENDING",   // active states
+                                          "I2C_SEND_ADDR", //  |
+                                          "I2C_RECEIVING", //  |
+                                          "I2C_SLAVE_TX",  //  |
+                                          "I2C_SLAVE_RX"}};
 
 void multipga::init()
 {
@@ -29,6 +44,7 @@ void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from 
     Wire2.write(msg);
     Wire2.endTransmission();
 
+    comm::sendString("PLEX_SEND_VERIFY");
     Wire2.requestFrom(device, 1, I2C_NOSTOP);
     while (Wire2.available())
     {
@@ -37,13 +53,13 @@ void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from 
 
     if (reg_state == msg)
     {
-        // TODO: send message?
+        comm::sendString("PLEX_REG_NEW");
     }
-    // TODO: let the user know if comm failed & such
+    comm::sendString("Post-I2C status: ", i2c_names[Wire2.status()]);
+    // Note: Didn't send the last SendByteOverHID(MISC_DIVIDER, PLEX_PRINT_ALL) b/c not sure what it does
 }
 
 void multipga::clear() // == plexClear from tca9548a.cpp
-// TODO: Do we need to do this?
 {
     multipga::enableChannel(cplex::plex_c_addr, 0x00);
     multipga::enableChannel(cplex::plex_b_addr, 0x00);
