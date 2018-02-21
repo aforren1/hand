@@ -529,7 +529,7 @@ let me know?  http://forum.pjrc.com/forums/4-Suggestions-amp-Bug-Reports
 
 #elif defined(USB_RAWHID)
   #define VENDOR_ID		0x16C0
-  #define PRODUCT_ID		0x8143  // (spells BLAM) original: 0x0486
+  #define PRODUCT_ID		0x0486 // originally changed the product id, but it makes the uploader unhappy
   #define RAWHID_USAGE_PAGE	0xFFAB  // recommended: 0xFF00 to 0xFFFF
   #define RAWHID_USAGE		0x0200  // recommended: 0x0100 to 0xFFFF
   #define MANUFACTURER_NAME	{'K', 'a', 't', 'a'}
