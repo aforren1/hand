@@ -2,7 +2,7 @@
 #include <iostream>
 // g++ test_settings.cpp ../src/settings.cpp -std=c++0x -o temp.exe
 int main() {
-    Settings settings(420, true, false);
+    Settings settings(420, true);
     std::cout << settings.getSamplingFrequency() << "\n";
     std::cout << settings.sampling_period_us << "\n";
     std::cout << settings.getGain(1, 3, 2) << "\n";

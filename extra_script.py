@@ -2,9 +2,9 @@ import os
 import shutil
 Import('env')
 
-FRAMEWORK_DIR = env.PioPlatform().get_package_dir("framework-arduinoteensy")
+framwork_dir = env.PioPlatform().get_package_dir("framework-arduinoteensy")
 path_to_desc = os.path.join(os.sep, 'cores', 'teensy3')
-full_path = FRAMEWORK_DIR + path_to_desc + os.sep
+full_path = framework_dir + path_to_desc + os.sep
 
 def swap_origin_usb_desc(source, target, env):
     print('Renaming usb_desc.h for now...')
