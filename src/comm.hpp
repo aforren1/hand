@@ -74,8 +74,9 @@ void sendRawPacket(std::array<uint8_t, 64> &tx_data);
  * 
  * @param tx_string is a std::string of length <= 64.
  * @note We take care of padding to length 64 before sending (spaces and a newline).
+ * @note These messages go to another interface (1, rather than 0), which is solely used for receiving debug messages.
  */
-void sendString(std::string &tx_string);
+void sendString(std::string tx_string);
 
 /**
  * @brief Concatenates two std::strings and sends to the host.
@@ -84,7 +85,7 @@ void sendString(std::string &tx_string);
  * @param string_2 second string.
  * @note comm::sendString("Optimization level ", std::to_string(3));
  */
-void sendString(std::string &string_1, std::string &string_2);
+void sendString(std::string string_1, std::string string_2);
 
 /**
  * @brief Stores the error sample as a series of bytes (uint8_t) for transfer to the host.

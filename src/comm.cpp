@@ -83,10 +83,10 @@ int comm::receiveRawPacket(std::array<uint8_t, 64> &rx_data)
 
 void comm::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 {
-    RawHID.send(tx_data.data(), 1);
+    RawHID.send(tx_data.data(), 0);
 }
 
-void comm::sendString(std::string &tx_string)
+void comm::sendString(std::string tx_string)
 {
     tx_string.append(63 - tx_string.length(), ' ');
     tx_string.append("\n");
@@ -94,7 +94,7 @@ void comm::sendString(std::string &tx_string)
     Serial.send_now();
 }
 
-void comm::sendString(std::string &string_1, std::string &string_2)
+void comm::sendString(std::string string_1, std::string string_2)
 {
     std::string x = string_1 + string_2;
     comm::sendString(x);

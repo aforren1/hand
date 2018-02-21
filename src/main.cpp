@@ -34,6 +34,8 @@ bool loop_led_status = false; // BUILTIN_LED blinks when data is being acquired
 
 void setup()
 {
+    comm::setupComm();
+    comm::sendString("Beginning setup.");
     // put all the analog pins in INPUT mode
     for (const auto &pin : constants::pin::sensor_pins)
     {
@@ -46,7 +48,6 @@ void setup()
     digitalWriteFast(LED_BUILTIN, LOW);
     digitalWriteFast(constants::pin::led_for_calibration, LOW);
     digitalWriteFast(constants::pin::led_for_adc, LOW);
-    comm::setupComm();
     analog::setupADC();
 
 #ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
@@ -57,6 +58,7 @@ void setup()
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;
     buffer_rx.fill(0); // initialize receive buffer
+    comm::sendString("Finished setting up.");
 }
 
 void loop()
@@ -95,6 +97,7 @@ void loop()
     comm_status = comm::receiveRawPacket(buffer_rx); // Check for any new messages from host
     if (comm_status > 0)                             // Deal with parsing apart the message and evaluate state changes
     {
+        comm::sendString("Message received.");
         ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
     }
 }
