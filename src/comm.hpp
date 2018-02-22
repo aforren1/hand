@@ -19,7 +19,7 @@ void setupComm();
  * @return a std::array of type uint8_t and length 64 (the outgoing USB packet).
  * 
  * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
- * @note This function ends up handling endianness issues via packing::num2bigendbytes.
+ * @note This function ends up handling endianness issues via packing::numToBigEndBytes.
  */
 std::array<uint8_t, 64> packGameSample(const std::array<float, 15> &game_sample);
 
@@ -91,7 +91,7 @@ void sendString(std::string string_1, std::string string_2);
  * @return tx_data a std::array of type uint8_t and length 64 (the outgoing USB packet).
  * 
  * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
- * @note This function ends up handling endianness issues via packing::num2bigendbytes.
+ * @note This function ends up handling endianness issues via packing::numToBigEndBytes.
  */
 std::array<uint8_t, 64> packErrSample(const std::array<float, 5> &err_sample);
 

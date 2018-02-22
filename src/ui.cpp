@@ -29,7 +29,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             {
                 std::array<uint8_t, 4> flt_container;
                 std::copy_n(buffer_rx.begin() + 2, 4, flt_container.begin());
-                float freq = packing::bigendbytes2num<float>(flt_container);
+                float freq = packing::bigEndBytesToNum<float>(flt_container);
                 last_err_code = settings.setSamplingFrequency(freq);
                 // store res as last error
             }
@@ -49,7 +49,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 int8_t channel = buffer_rx[3];
                 int8_t slot = buffer_rx[4];
                 std::copy_n(buffer_rx.begin() + 5, 4, flt_container.begin());
-                float val = packing::bigendbytes2num<float>(flt_container);
+                float val = packing::bigEndBytesToNum<float>(flt_container);
                 last_err_code = settings.setGain(finger, channel, slot, val);
             }
         }
@@ -58,7 +58,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             if (buffer_rx[1] == 'f') // sampling frequency
             {
                 float freq = settings.getSamplingFrequency();
-                std::array<uint8_t, 4> flt_container = packing::num2bigendbytes(freq);
+                std::array<uint8_t, 4> flt_container = packing::numToBigEndBytes(freq);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
                 comm::sendRawPacket(buffer_tx);
             }
@@ -74,7 +74,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 int8_t channel = buffer_rx[3];
                 int8_t slot = buffer_rx[4];
                 float gain = settings.getGain(finger, channel, slot);
-                std::array<uint8_t, 4> flt_container = packing::num2bigendbytes(gain);
+                std::array<uint8_t, 4> flt_container = packing::numToBigEndBytes(gain);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
                 comm::sendRawPacket(buffer_tx);
             }

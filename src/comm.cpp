@@ -16,7 +16,7 @@ std::array<uint8_t, 64> comm::packGameSample(const std::array<float, 15> &game_s
     unsigned int count = 0;
     for (auto i : game_sample)
     {
-        flt_container = packing::num2bigendbytes(i);
+        flt_container = packing::numToBigEndBytes(i);
         std::copy_n(flt_container.begin(), flt_container.size(), tx_data.begin() + count);
         count += 4;
     }
@@ -38,7 +38,7 @@ std::array<uint8_t, 64> comm::packErrSample(const std::array<float, 5> &err_samp
     unsigned int count = 0;
     for (auto i : err_sample)
     {
-        flt_container = packing::num2bigendbytes(i);
+        flt_container = packing::numToBigEndBytes(i);
         std::copy_n(flt_container.begin(), flt_container.size(), tx_data.begin() + count);
         count += 4;
     }
@@ -55,14 +55,14 @@ void comm::sendSample(const std::array<float, 5> &err_sample)
 std::array<uint8_t, 64> comm::packRawSample(uint32_t timestamp, int16_t deviation, const std::array<uint16_t, 20> &raw_sample)
 {
     std::array<uint8_t, 64> tx_data;
-    std::array<uint8_t, 4> long_container = packing::num2bigendbytes(timestamp);
-    std::array<uint8_t, 2> int_container = packing::num2bigendbytes(deviation);
+    std::array<uint8_t, 4> long_container = packing::numToBigEndBytes(timestamp);
+    std::array<uint8_t, 2> int_container = packing::numToBigEndBytes(deviation);
     std::copy_n(long_container.begin(), long_container.size(), tx_data.begin());
     std::copy_n(int_container.begin(), int_container.size(), tx_data.begin() + 4);
     unsigned int count = 6;
     for (auto i : raw_sample)
     {
-        int_container = packing::num2bigendbytes(i);
+        int_container = packing::numToBigEndBytes(i);
         std::copy_n(int_container.begin(), int_container.size(), tx_data.begin() + count);
         count += 2;
     }

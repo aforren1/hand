@@ -76,23 +76,6 @@ void multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
     multipga::enableChannel(cplex::plex_a_addr + xx, plex_channel);
 }
 
-// start PGA methods
-// TODO: check if this does anything?
-void multipga::accessRegister(uint8_t addr, bool is_read) // accessRegister in pga309.cpp
-{
-    // TODO: toggle builtin LED
-    if (addr > 0x08)
-    {
-        addr = 0x08;
-    }
-    // TODO: add messages back
-    if (is_read)
-    {
-        multipga::readPGA(addr);
-    }
-    // TODO: extra messages & potential handling of things?
-}
-
 uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
 {
     Wire2.beginTransmission(cplex::pga_addr);
@@ -126,13 +109,13 @@ void multipga::readPGA(uint8_t addr)
     }
     if (addr == 0x00)
     {
-        uint16_t count = packing::bigendbytes2num<uint16_t>(temp_byte_holder); //TODO: sanity check?
+        uint16_t count = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder); //TODO: sanity check?
         float temperature = 0.0625 * count;
         // TODO: send temperature message
     }
     else
     {
-        uint16_t error_code = packing::bigendbytes2num<uint16_t>(temp_byte_holder);
+        uint16_t error_code = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder);
         // TODO: send error code somewhere
     }
 }
@@ -143,7 +126,7 @@ void multipga::readPGA(uint8_t addr)
 *   @param fine_offset Desired fine offset as a fraction of the reference voltage
 *   @return Resulting 16-bit hex value for setting and value
 **/
-uint16_t fineOffset2Hex(float fine_offset)
+uint16_t fineOffsetToHex(float fine_offset)
 {
     return fine_offset * constants::adc::max_int;
 }
@@ -154,7 +137,7 @@ uint16_t fineOffset2Hex(float fine_offset)
 *   @param fine_gain Desired fine gain
 *   @return Resulting 16-bit hex value for setting and value
 **/
-uint16_t fineGain2Hex(float fine_gain)
+uint16_t fineGainToHex(float fine_gain)
 {
     return (fine_gain - 0.33333333) * 1.5 * constants::adc::max_int;
 }
@@ -216,10 +199,10 @@ uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3) // writeS
     switch (addr)
     {
     case 0x01:
-        write_msg = fineOffset2Hex(val1);
+        write_msg = fineOffsetToHex(val1);
         break;
     case 0x02:
-        write_msg = fineGain2Hex(val1);
+        write_msg = fineGainToHex(val1);
         break;
     case 0x03:
         write_msg = 42;
@@ -237,7 +220,7 @@ uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3) // writeS
         write_msg = 1952;
         break; // OutEnableCounterCtrl in Jacob's
     default:
-        write_msg = fineOffset2Hex(val1);
+        write_msg = fineOffsetToHex(val1);
         break;
     }
     return write_msg;

@@ -20,7 +20,7 @@ namespace packing
  * @note See usage in comm.cpp
  */
 template <class T>
-std::array<uint8_t, sizeof(T)> num2bigendbytes(T num);
+std::array<uint8_t, sizeof(T)> numToBigEndBytes(T num);
 
 /**
  * @brief function template that handles conversion from array of bytes to a value of type T.
@@ -32,10 +32,10 @@ std::array<uint8_t, sizeof(T)> num2bigendbytes(T num);
  * @note See usage in ui.cpp
  */
 template <class T>
-T bigendbytes2num(std::array<uint8_t, sizeof(T)> &b);
+T bigEndBytesToNum(std::array<uint8_t, sizeof(T)> &b);
 
 template <class T>
-std::array<uint8_t, sizeof(T)> num2bigendbytes(T num)
+std::array<uint8_t, sizeof(T)> numToBigEndBytes(T num)
 {
     std::array<uint8_t, sizeof(T)> b;
     memcpy(b.data(), &num, sizeof(T));
@@ -44,7 +44,7 @@ std::array<uint8_t, sizeof(T)> num2bigendbytes(T num)
 }
 
 template <class T>
-T bigendbytes2num(std::array<uint8_t, sizeof(T)> &b)
+T bigEndBytesToNum(std::array<uint8_t, sizeof(T)> &b)
 {
     T num;
     std::reverse(std::begin(b), std::end(b));
