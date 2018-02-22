@@ -106,23 +106,11 @@ void multipga::readPGA(uint8_t addr)
     }
 }
 
-/**
-*   @brief  Computes setting hex needed to represent intended fine offset
-*
-*   @param fine_offset Desired fine offset as a fraction of the reference voltage
-*   @return Resulting 16-bit hex value for setting and value
-**/
 uint16_t fineOffsetToHex(float fine_offset)
 {
     return fine_offset * constants::adc::max_int;
 }
 
-/**
-*   @brief  Computes setting hex needed to represent intended fine gain
-*
-*   @param fine_gain Desired fine gain
-*   @return Resulting 16-bit hex value for setting and value
-**/
 uint16_t fineGainToHex(float fine_gain)
 {
     return (fine_gain - 0.33333333) * 1.5 * constants::adc::max_int;
@@ -130,15 +118,6 @@ uint16_t fineGainToHex(float fine_gain)
 
 // TODO: Implement refCtrlLinear from Jacob's code
 
-/**
-*   @brief  Computes setting hex needed to represent intended front-end and output gains, and coarse offset
-*
-*   @param des_front_gain Desired front-end gain
-*   @param des_output_gain Desired output gain
-*   @param des_coarse_offset Desired coarse offset
-*   @return Resulting 16-bit hex value for setting and value
-*   @todo Tables have been omitted for brevity, but we can link to the source?
-**/
 uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float des_coarse_offset)
 {
     uint8_t owd = 0x01;
