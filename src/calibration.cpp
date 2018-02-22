@@ -54,12 +54,12 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         float average_mv = sum / ccalib::n_adc_readings;
         float diff_mv = calibration::inverseTransferFunction(average_mv, gain_vec);
         float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
-        float error_mv = diff_mv - 0; // ??? why
+        float error_mv = diff_mv - 0; // ? why
         float error_out = 0;
         comm::sendString("Average reading: " + std::to_string(average_mv));
         comm::sendString("Result from inverse transfer function: " + std::to_string(diff_mv));
-        comm::sendString("Adjustment (??): " + std::to_string(adjust_mv));
-        comm::sendString("Error mV (??): " + std::to_string(error_mv));
+        comm::sendString("Adjustment (?): " + std::to_string(adjust_mv));
+        comm::sendString("Error mV (?): " + std::to_string(error_mv));
         if (!iter)
         { // first iteration
             error_out = average_mv - (ccalib::mvcc / 4.0);
@@ -78,13 +78,13 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         {
             excess_mv = error_mv - coarse_mv_max;
             error_mv = coarse_mv_max;
-            comm::sendString("Calibration exceeded coarse (??), value: " + std::to_string(excess_mv));
+            comm::sendString("Calibration exceeded coarse (?), value: " + std::to_string(excess_mv));
         }
         else if (error_mv < -coarse_mv_max)
         {
             excess_mv = error_mv + coarse_mv_max;
             error_mv = -coarse_mv_max;
-            comm::sendString("Calibration exceeded coarse (??), value: " + std::to_string(excess_mv));
+            comm::sendString("Calibration exceeded coarse (?), value: " + std::to_string(excess_mv));
         }
 
         float desired_coarse_offset = -error_mv;
@@ -92,8 +92,8 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         uint16_t coarse_multi = gain_cmsg & 0x000f;
         uint16_t coarse_sign = (gain_cmsg & 0x0010) >> 4;
         comm::sendString("Gains and offsets message: " + std::to_string(gain_cmsg));
-        comm::sendString("MULTI_MSG (??): " + std::to_string(coarse_multi));
-        comm::sendString("SIGN_MSG (??): " + std::to_string(coarse_sign));
+        comm::sendString("MULTI_MSG (?): " + std::to_string(coarse_multi));
+        comm::sendString("SIGN_MSG (?): " + std::to_string(coarse_sign));
         if (coarse_sign == 1)
         {
             excess_mv = error_mv - coarse_multi * ccalib::vcc * 0.85;
@@ -136,7 +136,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         float average_mv = sum / ccalib::n_adc_readings;
         float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
         comm::sendString("Average reading: " + std::to_string(average_mv));
-        comm::sendString("Adjustment (??): " + std::to_string(adjust_mv));
+        comm::sendString("Adjustment (?): " + std::to_string(adjust_mv));
         float iter_step = 0;
         if (adjust_mv > ccalib::tol_mv)
         {
