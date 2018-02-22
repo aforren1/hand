@@ -15,7 +15,7 @@ void readPGA(uint8_t addr);
 uint16_t writePGA(uint8_t addr, float val1, float val2, float val3);
 }
 
-// helper functions
+// helper functions (internal use)
 /**
 *   @brief  Computes setting hex needed to represent intended fine offset
 *

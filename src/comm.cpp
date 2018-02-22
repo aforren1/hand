@@ -1,10 +1,8 @@
 #include <Arduino.h> // necessary for RawHID invocations
-#undef min
-#undef max
-#include "packing.hpp"
 #include <array>
 #include <algorithm>
 #include <string>
+#include "packing.hpp"
 #include "comm.hpp"
 
 void comm::setupComm() {}
