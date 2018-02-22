@@ -38,7 +38,7 @@ template <class T>
 std::array<uint8_t, sizeof(T)> numToBigEndBytes(T num)
 {
     std::array<uint8_t, sizeof(T)> b;
-    memcpy(b.data(), &num, sizeof(T));
+    std::memcpy(b.data(), &num, sizeof(T));
     std::reverse(std::begin(b), std::end(b));
     return b;
 }
