@@ -1,6 +1,5 @@
 #ifndef PACKING_H
 #define PACKING_H
-#include <iostream>
 #include <array>
 #include <algorithm>
 #include <cstring>
