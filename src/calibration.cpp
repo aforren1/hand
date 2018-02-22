@@ -156,6 +156,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         gain_vec[5] += iter_step; // update fine offset
         multipga::setChannel(mux_channel);
         uint16_t offset_msg = multipga::writePGA(0x01, gain_vec[5], 0, 0);
+        comm::sendString("Fine offset message: " + std::to_string(offset_msg));
         comm::sendString("Current fine offset: " + std::to_string(gain_vec[5]));
         unsigned long t0 = millis();
         while (millis() - t0 < ccalib::settling_ms) // allow settling (TODO: revisit?)
