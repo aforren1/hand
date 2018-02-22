@@ -58,8 +58,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             if (buffer_rx[1] == 'f') // sampling frequency
             {
                 float freq = settings.getSamplingFrequency();
-                std::array<uint8_t, 4> flt_container;
-                packing::num2bigendbytes(freq, flt_container);
+                std::array<uint8_t, 4> flt_container = packing::num2bigendbytes(freq);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
                 comm::sendRawPacket(buffer_tx);
             }
@@ -75,8 +74,7 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
                 int8_t channel = buffer_rx[3];
                 int8_t slot = buffer_rx[4];
                 float gain = settings.getGain(finger, channel, slot);
-                std::array<uint8_t, 4> flt_container;
-                packing::num2bigendbytes(gain, flt_container);
+                std::array<uint8_t, 4> flt_container = packing::num2bigendbytes(gain);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
                 comm::sendRawPacket(buffer_tx);
             }
