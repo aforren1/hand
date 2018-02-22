@@ -55,6 +55,20 @@ const uint8_t pga_addr = 0x40;
 const uint8_t plex_a_addr = 0x70;
 const uint8_t plex_b_addr = 0x71;
 const uint8_t plex_c_addr = 0x72;
+
+const std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped states
+                                                "I2C_TIMEOUT",   //  |
+                                                "I2C_ADDR_NAK",  //  |
+                                                "I2C_DATA_NAK",  //  |
+                                                "I2C_ARB_LOST",  //  |
+                                                "I2C_BUF_OVF",   //  |
+                                                "I2C_NOT_ACQ",   //  |
+                                                "I2C_DMA_ERR",   //  V
+                                                "I2C_SENDING",   // active states
+                                                "I2C_SEND_ADDR", //  |
+                                                "I2C_RECEIVING", //  |
+                                                "I2C_SLAVE_TX",  //  |
+                                                "I2C_SLAVE_RX"}};
 };
 };
 

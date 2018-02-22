@@ -8,20 +8,6 @@
 
 namespace cplex = constants::multiplex;
 
-std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped states
-                                          "I2C_TIMEOUT",   //  |
-                                          "I2C_ADDR_NAK",  //  |
-                                          "I2C_DATA_NAK",  //  |
-                                          "I2C_ARB_LOST",  //  |
-                                          "I2C_BUF_OVF",   //  |
-                                          "I2C_NOT_ACQ",   //  |
-                                          "I2C_DMA_ERR",   //  V
-                                          "I2C_SENDING",   // active states
-                                          "I2C_SEND_ADDR", //  |
-                                          "I2C_RECEIVING", //  |
-                                          "I2C_SLAVE_TX",  //  |
-                                          "I2C_SLAVE_RX"}};
-
 void multipga::init()
 {
     // Setup for Master mode, pins 3_4, external pullups, 400kHz, 200ms default timeout
@@ -55,7 +41,7 @@ void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from 
     {
         comm::sendString("PLEX_REG_NEW");
     }
-    comm::sendString("Post-I2C status: ", i2c_names[Wire2.status()]);
+    comm::sendString("Post-I2C status: ", cplex::i2c_names[Wire2.status()]);
     // Note: Didn't send the last SendByteOverHID(MISC_DIVIDER, PLEX_PRINT_ALL) b/c not sure what it does
 }
 

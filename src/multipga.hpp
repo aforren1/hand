@@ -9,7 +9,6 @@ void init();                                     // init method (start comm, fee
 void setChannel(uint8_t channel);                // select single I2C channel across all multiplexers (== plexSelect)
 void clear();                                    // clear all I2C channels across all multiplexers (== plexClear)
 void enableChannel(uint8_t device, uint8_t msg); // sends channel enable message to multiplexer with target address (== switchPlex)
-void plexTest();                                 // haven't written yet (see old code)
 
 // originally from pga309.cpp
 void readPGA(uint8_t addr);
