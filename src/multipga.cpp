@@ -64,6 +64,9 @@ void multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
 
 uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
 {
+    comm::sendString("Sending vals " + std::to_string(val1) + ", " +
+                     std::to_string(val2) + ", " + std::to_string(val3) +
+                     " to address " + std::to_string(addr));
     Wire2.beginTransmission(cplex::pga_addr);
     Wire2.write(addr);
     int16_t raw_2byte = writeSelect(addr, val1, val2, val3);
@@ -76,7 +79,6 @@ uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) //
 
 void multipga::readPGA(uint8_t addr)
 {
-    uint8_t n_bytes;
     uint8_t redundancy_bytes = 5;
     std::array<uint8_t, 2> temp_byte_holder;
     for (uint8_t i = 0; i < redundancy_bytes; i++)
@@ -84,7 +86,7 @@ void multipga::readPGA(uint8_t addr)
         Wire2.beginTransmission(cplex::pga_addr);
         Wire2.write(addr);
         Wire2.requestFrom(cplex::pga_addr, 2, I2C_NOSTOP);
-        n_bytes = Wire2.available();
+        Wire2.available();
         while (Wire2.available())
         {
             // Note: tried to back in reverse order, so we can use the packing machinery
@@ -97,12 +99,12 @@ void multipga::readPGA(uint8_t addr)
     {
         uint16_t count = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder); //TODO: sanity check?
         float temperature = 0.0625 * count;
-        // TODO: send temperature message
+        comm::sendString("Temperature: " + std::to_string(temperature));
     }
     else
     {
         uint16_t error_code = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder);
-        // TODO: send error code somewhere
+        comm::sendString("Error code: " + std::to_string(error_code));
     }
 }
 
@@ -115,8 +117,6 @@ uint16_t fineGainToHex(float fine_gain)
 {
     return (fine_gain - 0.33333333) * 1.5 * constants::adc::max_int;
 }
-
-// TODO: Implement refCtrlLinear from Jacob's code
 
 uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float des_coarse_offset)
 {
@@ -153,11 +153,12 @@ uint16_t gainsAndOffset2Hex(float des_front_gain, float des_output_gain, float d
     return result;
 }
 
+// TODO: Implement refCtrlLinear from Jacob's code
 // TODO: Implement PGAConfigLimit from Jacob's code
 // TODO: implement TempADCCtrl from Jacob's code
 // TODO: implement OutEnableCounterCtrl from Jacob's code
-// NOTE: tempConvert has been replaced
 
+// NOTE: only 0x01, 0x02, and 0x04 are used
 uint16_t writeSelect(uint8_t addr, float val1, float val2, float val3) // writeSelect in pga309.cpp
 {
     uint16_t write_msg = 0x0000;

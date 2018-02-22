@@ -40,8 +40,8 @@ const float sqrt2 = sqrt(2);
 namespace calibration
 {
 const unsigned int settling_ms = 100;     ///< settling time during calibration
-const unsigned int max_iter = 1;          ///< maximum iterations in optimization?
-const unsigned int max_fine_iter = 10;    ///< Maximum iterations of fine step
+const uint16_t max_iter = 1;              ///< maximum iterations in optimization?
+const uint16_t max_fine_iter = 10;        ///< Maximum iterations of fine step
 const unsigned int n_adc_readings = 1000; ///< number of ADC readings to average over
 const float target_fraction = 0.5;        ///< Trying to land between 0 and 1?
 const float vcc = 3.33;                   ///< Matching Jacob here, but should it be 3.3?
