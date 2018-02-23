@@ -39,8 +39,8 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
     comm::sendString("Fine offset: " + std::to_string(gain_vec[5]));
 
     float desired_front_gain = gain_vec[0];
-    float desired_output_gain = gain_vec[1];
-    float desired_fine_gain = gain_vec[2];
+    float desired_fine_gain = gain_vec[1];
+    float desired_output_gain = gain_vec[2];
     uint16_t iter;
     std::array<float, ccalib::n_adc_readings> adc_readings;
     // coarse adjustments first
