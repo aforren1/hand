@@ -11,7 +11,7 @@
 
 uint8_t last_err_code = 0;
 
-void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Settings &settings)
+void ui::handleInput(bool &is_sampling, const std::array<uint8_t, 64> &buffer_rx, Settings &settings)
 {
     std::array<uint8_t, 64> buffer_tx = {};
     if (is_sampling)
@@ -135,5 +135,4 @@ void ui::handleInput(bool &is_sampling, std::array<uint8_t, 64> &buffer_rx, Sett
             settings.pga_settings_copy = settings.pga_settings;
         }
     }
-    buffer_rx.fill(0);
 }

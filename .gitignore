@@ -9,3 +9,4 @@ doc/
 .vscode/launch.json
 test-cppcheck-build-dir/
 test.cppcheck
+.vscode/.browse.c_cpp.db*

@@ -100,5 +100,6 @@ void loop()
     {
         comm::sendString("Message received.");
         ui::handleInput(is_sampling, buffer_rx, settings); // all args are pass by reference
+        buffer_rx.fill(0);
     }
 }
