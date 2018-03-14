@@ -31,7 +31,6 @@ void comm::sendSample(const std::array<float, 15> &game_sample)
     RawHID.send(tx_data.data(), 0);
 }
 
-// TODO: Below is a prime candidate for templates
 std::array<uint8_t, 64> comm::packErrSample(const std::array<float, 5> &err_sample)
 {
     std::array<uint8_t, 64> tx_data;

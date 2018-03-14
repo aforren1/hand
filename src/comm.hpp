@@ -15,7 +15,7 @@ void setupComm();
 /**
  * @brief Stores the game sample as a series of bytes (uint8_t) for transfer to the host.
  * 
- * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::applyRotation)
+ * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::calcRotation)
  * @return a std::array of type uint8_t and length 64 (the outgoing USB packet).
  * 
  * @note Teensy (and other microcontrollers) tend to be little-endian, and we want to communicate as big-endian.
@@ -26,7 +26,7 @@ std::array<uint8_t, 64> packGameSample(const std::array<float, 15> &game_sample)
 /**
  * @brief Sends a game sample to the host.
  * 
- * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::applyRotation)
+ * @param game_sample is a reference to a std::array of type float and length 15 (prepared by analog::calcRotation)
  * @return void
  */
 void sendSample(const std::array<float, 15> &game_sample);

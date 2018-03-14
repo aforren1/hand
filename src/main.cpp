@@ -22,7 +22,7 @@ int comm_status = 0;                           ///< HID communication status
 bool is_sampling = true;                       ///< false is settings, true is sampling
 Settings settings(100, false);                 // default to 100 hz, "raw" mode
 std::array<uint16_t, 20> recent_values;        ///< mildly strong assumption that we're always reading 16-bit ints
-std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through applyRotation
+std::array<float, 15> converted_recent_values; ///< X, Y, Z forces that have been fed through calcRotation
 
 elapsedMillis adc_data_timestamp;         ///< Time at the start of acquisition of a given sample, in ms
 uint32_t timestamp = 0;                   ///< Stores the result of adc_data_timestamp (which runs away)
@@ -78,7 +78,7 @@ void loop()
 
         if (settings.getGameMode())
         {                                                                  // if in "game" mode, perform rotation and send data
-            analog::applyRotation(recent_values, converted_recent_values); // TODO: move applyRotation somewhere more appropriate
+            analog::calcRotation(recent_values, converted_recent_values); // TODO: move calcRotation somewhere more appropriate
             comm::sendSample(converted_recent_values);
         }
         else

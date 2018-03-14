@@ -31,7 +31,7 @@ float analog::readChannelMillivolt(uint8_t channel)
     return val * 3.3 / adc->getMaxValue(ADC_0) * 1000;
 }
 
-void analog::applyRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)
+void analog::calcRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)
 {
     int j = 0;
     for (int i = 0; i < 15; i += 3)

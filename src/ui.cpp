@@ -90,7 +90,7 @@ void ui::handleInput(bool &is_sampling, const std::array<uint8_t, 64> &buffer_rx
                 if (settings.getGameMode())
                 {
                     std::array<float, 15> temp_rot_data;
-                    analog::applyRotation(temp_data, temp_rot_data);
+                    analog::calcRotation(temp_data, temp_rot_data);
                     comm::sendSample(temp_rot_data);
                 }
                 else
