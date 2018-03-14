@@ -5,8 +5,8 @@
 
 struct PGASettings
 {
-    // first dim is finger, second is slot, 3rd is value (front gain, fine gain, output gain, coarse offset, fine offset)
-    std::array<std::array<std::array<float, 6>, 4>, 5> gains_and_offsets; ///< 5*4*6 nested array of floats. First dim is finger, second is channel, third is slot.
+    // first dim is finger, second is stage, 3rd is value (front gain, fine gain, output gain, coarse offset, fine offset)
+    std::array<std::array<std::array<float, 6>, 4>, 5> gains_and_offsets; ///< 5*4*6 nested array of floats. First dim is finger, second is channel, third is stage.
     std::array<float, 6> lower_bounds;                                    ///< Lower bounds for the gain and offset settings.
     std::array<float, 6> upper_bounds;                                    ///< Upper bounds for the gain and offset settings.
     /**
@@ -22,7 +22,7 @@ struct PGASettings
      * @note If the product has been updated, then all other gain settings will be updated.
      *       If one of the other gain settings has been updated (e.g. the fine gain), the product will be recalculated.
      */
-    void updateProduct(int8_t finger, int8_t channel, int8_t slot);
+    void updateProduct(int8_t finger, int8_t channel, int8_t stage);
 };
 
 struct Settings
@@ -72,8 +72,8 @@ struct Settings
      * 
      * @param finger takes values from [-1, 4]. -1 applies the value to all fingers
      * @param channel takes values from [-1, 4]. -1 applies the value to all channels
-     * @param slot takes values from [0, 3]. 0 is the front gain, 1 is the fine gain, 2 is the output gain, 3 is the product.
-     * @param value is the proposed value for the slot
+     * @param stage takes values from [0, 3]. 0 is the front gain, 1 is the fine gain, 2 is the output gain, 3 is the product.
+     * @param value is the proposed value for the stage
      * 
      * @return 1 on failure, 0 on success. Failure can either be due to indexing or violation of a boundary.
      * 
@@ -83,15 +83,15 @@ struct Settings
      * 
      * @todo In verbose mode, should we shout if someone tries to set the individual channel gain?
      */
-    uint8_t setGain(int8_t finger, int8_t channel, int8_t slot, float value);
+    uint8_t setGain(int8_t finger, int8_t channel, int8_t stage, float value);
     /**
-     * @brief get the gain setting for a particular finger, channel, and slot.
+     * @brief get the gain setting for a particular finger, channel, and stage.
      * 
      * @return current gain setting.
      * 
      * @note Usage would be something like gain = settings.getGain(2, 0, 3) for the middle finger, first channel, and product of gains.
      */
-    float getGain(int8_t finger, int8_t channel, int8_t slot);
+    float getGain(int8_t finger, int8_t channel, int8_t stage);
 };
 
 #endif

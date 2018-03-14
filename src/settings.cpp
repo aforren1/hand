@@ -36,18 +36,18 @@ bool Settings::getGameMode()
     return game_mode;
 }
 
-uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float value)
+uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t stage, float value)
 {
     // check indexing
     // Note that any channel other than -1 is disallowed; in the future, it *could* be possible
     // to allow different gains per channel, but I think the practicality is limited.
     // TODO: Should we nix allowing channel to be used ever?
-    if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || slot < 0 || slot > 3)
+    if (finger < -1 || finger > 4 || channel < -1 || finger > 3 || stage < 0 || stage > 3)
     {
         return 1;
     }
     // check boundaries
-    if (value < pga_settings.lower_bounds[slot] || value > pga_settings.upper_bounds[slot])
+    if (value < pga_settings.lower_bounds[stage] || value > pga_settings.upper_bounds[stage])
     {
         return 1;
     }
@@ -57,8 +57,8 @@ uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float valu
         {
             for (int j = 0; j < 3; j++)
             {
-                pga_settings.gains_and_offsets[i][j][slot] = value;
-                pga_settings.updateProduct(i, j, slot);
+                pga_settings.gains_and_offsets[i][j][stage] = value;
+                pga_settings.updateProduct(i, j, stage);
             }
         }
     }
@@ -66,29 +66,29 @@ uint8_t Settings::setGain(int8_t finger, int8_t channel, int8_t slot, float valu
     { // apply setting to single channel, all fingers
         for (int i = 0; i < 4; i++)
         {
-            pga_settings.gains_and_offsets[i][channel][slot] = value;
-            pga_settings.updateProduct(i, channel, slot);
+            pga_settings.gains_and_offsets[i][channel][stage] = value;
+            pga_settings.updateProduct(i, channel, stage);
         }
     }
     else if (channel == -1)
     { // apply setting to all channels, single finger
         for (int j = 0; j < 3; j++)
         {
-            pga_settings.gains_and_offsets[finger][j][slot] = value;
-            pga_settings.updateProduct(finger, j, slot);
+            pga_settings.gains_and_offsets[finger][j][stage] = value;
+            pga_settings.updateProduct(finger, j, stage);
         }
     }
     else
     { // apply setting to single channel, single finger
-        pga_settings.gains_and_offsets[finger][channel][slot] = value;
-        pga_settings.updateProduct(finger, channel, slot);
+        pga_settings.gains_and_offsets[finger][channel][stage] = value;
+        pga_settings.updateProduct(finger, channel, stage);
     }
     return 0;
 }
 
-float Settings::getGain(int8_t finger, int8_t channel, int8_t slot)
+float Settings::getGain(int8_t finger, int8_t channel, int8_t stage)
 {
-    return pga_settings.gains_and_offsets[finger][channel][slot];
+    return pga_settings.gains_and_offsets[finger][channel][stage];
 }
 
 PGASettings::PGASettings()
@@ -109,10 +109,10 @@ PGASettings::PGASettings()
     upper_bounds = {{128, 1, 9, 128 * 9, 0, constants::calibration::mvcc}}; // TODO: Check coarse offset bounds
 }
 
-void PGASettings::updateProduct(int8_t finger, int8_t channel, int8_t slot)
+void PGASettings::updateProduct(int8_t finger, int8_t channel, int8_t stage)
 {
     // http://www.ti.com/lit/ug/sbou024b/sbou024b.pdf, pg 109
-    if (slot == 3)
+    if (stage == 3)
     { // set the product, so use lookup table to update other elements
         //
         float small_val = 0; // lower limit for the fine gain

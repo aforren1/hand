@@ -42,15 +42,15 @@ void ui::handleInput(bool &is_sampling, const std::array<uint8_t, 64> &buffer_rx
             {
                 // first byte is the finger (-1 for all fingers)
                 // next byte is the channel (-1 for all channels)
-                // next byte is the slot (0 = front gain, 1 = fine, 2 = output, 3 = product)
+                // next byte is the stage (0 = front gain, 1 = fine, 2 = output, 3 = product)
                 // next 4 are the float value
                 std::array<uint8_t, 4> flt_container;
                 int8_t finger = buffer_rx[2];
                 int8_t channel = buffer_rx[3];
-                int8_t slot = buffer_rx[4];
+                int8_t stage = buffer_rx[4];
                 std::copy_n(buffer_rx.begin() + 5, 4, flt_container.begin());
                 float val = packing::bigEndBytesToNum<float>(flt_container);
-                last_err_code = settings.setGain(finger, channel, slot, val);
+                last_err_code = settings.setGain(finger, channel, stage, val);
             }
         }
         else if (buffer_rx[0] == 'g') // get
@@ -72,8 +72,8 @@ void ui::handleInput(bool &is_sampling, const std::array<uint8_t, 64> &buffer_rx
             {
                 int8_t finger = buffer_rx[2];
                 int8_t channel = buffer_rx[3];
-                int8_t slot = buffer_rx[4];
-                float gain = settings.getGain(finger, channel, slot);
+                int8_t stage = buffer_rx[4];
+                float gain = settings.getGain(finger, channel, stage);
                 std::array<uint8_t, 4> flt_container = packing::numToBigEndBytes(gain);
                 std::copy_n(flt_container.begin(), 4, buffer_tx.begin());
                 comm::sendRawPacket(buffer_tx);
