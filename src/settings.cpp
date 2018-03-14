@@ -111,6 +111,7 @@ PGASettings::PGASettings()
 
 void PGASettings::updateProduct(int8_t finger, int8_t channel, int8_t slot)
 {
+    // http://www.ti.com/lit/ug/sbou024b/sbou024b.pdf, pg 109
     if (slot == 3)
     { // set the product, so use lookup table to update other elements
         //

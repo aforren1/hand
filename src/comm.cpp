@@ -5,7 +5,10 @@
 #include "packing.hpp"
 #include "comm.hpp"
 
-void comm::setupComm() {}
+void comm::setupComm() 
+{
+    Serial.begin(9600);
+}
 
 std::array<uint8_t, 64> comm::packGameSample(const std::array<float, 15> &game_sample)
 {

@@ -52,9 +52,10 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         }
         float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
         float average_mv = sum / ccalib::n_adc_readings;
+        // TODO: detect erroneous calibration (high variance?)
         float diff_mv = calibration::inverseTransferFunction(average_mv, gain_vec);
         float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
-        float error_mv = diff_mv - 0; // ? why
+        float error_mv = diff_mv - 0; // TODO: this is an offset (sanity check if ADC matches expected board output)
         float error_out = 0;
         comm::sendString("Average reading: " + std::to_string(average_mv));
         comm::sendString("Result from inverse transfer function: " + std::to_string(diff_mv));
