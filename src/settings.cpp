@@ -1,6 +1,6 @@
+#include <algorithm>
 #include "constants.hpp"
 #include "settings.hpp"
-#include <algorithm>
 
 Settings::Settings(float sampling_frequency, bool game)
 {

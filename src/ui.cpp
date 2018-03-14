@@ -5,7 +5,6 @@
 #include "calibration.hpp"
 #include "packing.hpp"
 #include "constants.hpp"
-#include "multipga.hpp"
 #include "analog.hpp"
 #include "comm.hpp"
 
