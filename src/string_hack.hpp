@@ -10,7 +10,7 @@ template <typename T>
 std::string to_string(const T &n)
 {
     std::ostringstream stm;
-    stm << n;
+    stm << +n; // + unary operator prevents automatic ASCII jank for uint8_t (from http://www.cs.technion.ac.il/users/yechiel/CS/FAQs/c++-faq/print-char-or-ptr-as-number.html)
     return stm.str();
 }
 }

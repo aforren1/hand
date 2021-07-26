@@ -24,7 +24,7 @@ void multipga::init()
 void multipga::enableChannel(uint8_t device, uint8_t msg) // == switchPlex from tca9548a.cpp
 {
     comm::sendString("Device: ", std::to_string(device));
-    comm::sendString("Message: ", std::to_string(msg));
+    comm::sendString("Message: ", std::to_string(msg)); // Enable 1 channel (log2(msg) = chan) or disable all (0x00)
     uint8_t reg_state = 0xFF;
     Wire2.beginTransmission(device);
     Wire2.write(msg);
@@ -71,7 +71,7 @@ uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) //
     Wire2.write(addr);
     int16_t raw_2byte = writeSelect(addr, val1, val2, val3);
     uint8_t write_array[2] = {};
-    memcpy(&raw_2byte, write_array, 2);
+    memcpy(write_array, &raw_2byte, 2);
     Wire2.write(write_array, 2);
     Wire2.endTransmission();
     return raw_2byte;
@@ -86,7 +86,7 @@ void multipga::readPGA(uint8_t addr)
         Wire2.beginTransmission(cplex::pga_addr);
         Wire2.write(addr);
         Wire2.requestFrom(cplex::pga_addr, 2, I2C_NOSTOP);
-        Wire2.available();
+        //Wire2.available();
         while (Wire2.available())
         {
             // Note: tried to back in reverse order, so we can use the packing machinery

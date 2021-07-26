@@ -24,12 +24,31 @@ int calibration::calibrateAllChannels(PGASettings &pga_settings)
     return 0;
 }
 
+int calibration::calibrateAmp(uint8_t amp, PGASettings &pga_settings)
+{
+    if (amp >= 20 || amp < 0) return -1;
+    uint8_t finger = amp / 4;
+    uint8_t chip = amp % 4;
+    calibration::calibrateChannel(cpin::mux_pins_nested[finger][chip], pga_settings.gains_and_offsets[finger][chip]);
+    return 0;
+}
+
+int calibration::calibrateFinger(uint8_t finger, PGASettings &pga_settings)
+{
+    if (finger >= 5 || finger < 0) return -1;
+    for (int j = 0; j < 4; j++)
+    {
+        calibration::calibrateChannel(cpin::mux_pins_nested[finger][j], pga_settings.gains_and_offsets[finger][j]);
+    }
+    return 0;
+}
+
 int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec)
 // 0th index is front gain, 1st index is fine gain, 2nd index is output gain, 3rd is product (not used here)
 {
     digitalWriteFast(constants::pin::led_for_calibration, HIGH);
     comm::sendString("Starting calibration on channel " + std::to_string(mux_channel));
-    comm::sendString("Analog pin: " + std::to_string(cpin::sensor_pins[mux_channel]));
+    comm::sendString("Analog pin: " + std::to_string(cpin::sensor_pins[mux_channel])); //TO DO: A[#] rather than digital pin #?
     comm::sendString("Desired settings: ");
     comm::sendString("Frontend gain: " + std::to_string(gain_vec[0]));
     comm::sendString("Fine gain: " + std::to_string(gain_vec[1]));
@@ -41,6 +60,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
     float desired_front_gain = gain_vec[0];
     float desired_fine_gain = gain_vec[1];
     float desired_output_gain = gain_vec[2];
+    std::array<float, 6> pwr_on_gain = constants::multiplex::power_on_settings;
     uint16_t iter;
     std::array<float, ccalib::n_adc_readings> adc_readings;
     // coarse adjustments first
@@ -53,27 +73,38 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         float sum = std::accumulate(adc_readings.begin(), adc_readings.end(), 0);
         float average_mv = sum / ccalib::n_adc_readings;
         // TODO: detect erroneous calibration (high variance?)
-        float diff_mv = calibration::inverseTransferFunction(average_mv, gain_vec);
-        float adjust_mv = average_mv - (ccalib::mvcc * ccalib::target_fraction);
+        float diff_mv = 0;
+        if (!iter){
+            diff_mv = calibration::inverseTransferFunction(average_mv, pwr_on_gain); // Using intended gains on first iter leads to non-convergence from a wrong determination of input
+        } else {
+            diff_mv = calibration::inverseTransferFunction(average_mv, gain_vec);
+        }
+        float adjust_mv = (ccalib::mvcc * ccalib::target_fraction) - average_mv;
         float error_mv = diff_mv - 0; // TODO: this is an offset (sanity check if ADC matches expected board output)
         float error_out = 0;
+        comm::sendString("Reading integral: " + std::to_string(sum));
+        comm::sendString("Sample count: " + std::to_string(ccalib::n_adc_readings));
         comm::sendString("Average reading: " + std::to_string(average_mv));
-        comm::sendString("Result from inverse transfer function: " + std::to_string(diff_mv));
-        comm::sendString("Adjustment (?): " + std::to_string(adjust_mv));
-        comm::sendString("Error mV (?): " + std::to_string(error_mv));
+        if (!iter){
+            comm::sendString("Result from inverse transfer function (power-on gain): " + std::to_string(diff_mv));
+        } else {
+            comm::sendString("Result from inverse transfer function (target gain): " + std::to_string(diff_mv));
+        }
+        comm::sendString("Output adjustment to target voltage: " + std::to_string(adjust_mv));
+        comm::sendString("Error in input voltage: " + std::to_string(error_mv));
         if (!iter)
         { // first iteration
-            error_out = average_mv - (ccalib::mvcc / 4.0);
+            error_out = average_mv - pwr_on_gain[5]; // Average ADC should match initial fine offset from power-on
         }
         else
         {
-            error_out = adjust_mv;
+            error_out = -adjust_mv;
         }
-        comm::sendString("Error mV, part 2: " + std::to_string(error_out));
+        comm::sendString("Error in output voltage: " + std::to_string(error_out));
         multipga::setChannel(mux_channel); // enable intended PGA channel
 
         // PART 1: Modify sensitivity
-        float coarse_mv_max = ccalib::vcc * 14 * 0.85; // TODO: make const
+        float coarse_mv_max = constants::calibration::coarse_max; // vcc to mvcc??
         float excess_mv = 0;
         if (error_mv > coarse_mv_max)
         {

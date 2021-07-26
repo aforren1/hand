@@ -25,6 +25,11 @@ int calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gain_vec);
      * 
      * @note Return currently does not do anything useful.
      */
+
+int calibrateAmp(uint8_t amp, PGASettings &pga_settings);
+
+int calibrateFinger(uint8_t finger, PGASettings &pga_settings);
+
 int calibrateAllChannels(PGASettings &pga_settings);
 
 /**
