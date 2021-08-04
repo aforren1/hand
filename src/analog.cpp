@@ -9,11 +9,13 @@ ADC *adc = new ADC();
 
 void analog::setupADC()
 {
-    adc->setResolution(cadc::resolution);
-    adc->setAveraging(cadc::averaging);
-    adc->setSamplingSpeed(ADC_SAMPLING_SPEED::HIGH_SPEED);
-    adc->setConversionSpeed(ADC_CONVERSION_SPEED::HIGH_SPEED_16BITS);
-    adc->setReference(ADC_REFERENCE::REF_EXT);
+    for (ADC_Module *const module : {adc->adc0,adc->adc1}){
+        module->setResolution(cadc::resolution);
+        module->setAveraging(cadc::averaging);
+        module->setSamplingSpeed(ADC_SAMPLING_SPEED::HIGH_SPEED);
+        module->setConversionSpeed(ADC_CONVERSION_SPEED::HIGH_SPEED_16BITS);
+        module->setReference(ADC_REFERENCE::REF_EXT);    
+    }
 }
 
 void analog::readAllOnce(std::array<uint16_t, 20> &recent_values)
@@ -28,7 +30,7 @@ float analog::readChannelMillivolt(uint8_t channel)
 {
     // returns analog reading in millivolts
     unsigned int val = adc->analogRead(channel);
-    return val * 3.3 / adc->getMaxValue(ADC_0) * 1000;
+    return val * 3.3 / adc->adc0->getMaxValue() * 1000;
 }
 
 void analog::calcRotation(const std::array<uint16_t, 20> &recent_values, std::array<float, 15> &converted_values)

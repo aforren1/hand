@@ -56,6 +56,8 @@ const uint8_t pga_addr = 0x40;
 const uint8_t plex_a_addr = 0x70;
 const uint8_t plex_b_addr = 0x71;
 const uint8_t plex_c_addr = 0x72;
+enum PLXMDL {p9847, p9848};
+const PLXMDL plxUsed = p9848; // Switch to p9848 if a simultaneous channel enable plex is used, switch to p9847 if a single channel enable plex is used
 
 const std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped states
                                                 "I2C_TIMEOUT",   //  |

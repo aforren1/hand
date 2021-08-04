@@ -48,7 +48,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
 {
     digitalWriteFast(constants::pin::led_for_calibration, HIGH);
     comm::sendString("Starting calibration on channel " + std::to_string(mux_channel));
-    comm::sendString("Analog pin: " + std::to_string(cpin::sensor_pins[mux_channel])); //TO DO: A[#] rather than digital pin #?
+    comm::sendString("Analog pin: " + std::to_string(cpin::sensor_pins[mux_channel]));
     comm::sendString("Desired settings: ");
     comm::sendString("Frontend gain: " + std::to_string(gain_vec[0]));
     comm::sendString("Fine gain: " + std::to_string(gain_vec[1]));
@@ -82,13 +82,15 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         float adjust_mv = (ccalib::mvcc * ccalib::target_fraction) - average_mv;
         float error_mv = diff_mv - 0; // TODO: this is an offset (sanity check if ADC matches expected board output)
         float error_out = 0;
-        comm::sendString("Reading integral: " + std::to_string(sum));
-        comm::sendString("Sample count: " + std::to_string(ccalib::n_adc_readings));
         comm::sendString("Average reading: " + std::to_string(average_mv));
-        if (!iter){
-            comm::sendString("Result from inverse transfer function (power-on gain): " + std::to_string(diff_mv));
+        if (abs(diff_mv) < 1){
+            comm::sendString("Inverse transfer function yields no input difference.");
         } else {
-            comm::sendString("Result from inverse transfer function (target gain): " + std::to_string(diff_mv));
+            if (!iter){
+                comm::sendString("Result from inverse transfer function (power-on gain): " + std::to_string(diff_mv));
+            } else {
+                comm::sendString("Result from inverse transfer function (target gain): " + std::to_string(diff_mv));
+            }    
         }
         comm::sendString("Output adjustment to target voltage: " + std::to_string(adjust_mv));
         comm::sendString("Error in input voltage: " + std::to_string(error_mv));
@@ -183,7 +185,7 @@ int calibration::calibrateChannel(uint8_t mux_channel, std::array<float, 6> &gai
         else
         {
             comm::sendString("Fine calibration within tolerance of " + std::to_string(ccalib::tol_mv));
-            continue; // criterion met
+            break; // criterion met
         }
         gain_vec[5] += iter_step; // update fine offset
         multipga::setChannel(mux_channel);

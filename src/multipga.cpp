@@ -53,13 +53,27 @@ void multipga::clear() // == plexClear from tca9548a.cpp
     multipga::enableChannel(cplex::plex_a_addr, 0x00);
 }
 
-void multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
+uint8_t multipga::setChannel(uint8_t chan) // plexSelect from tca9548a.cpp
 {
     multipga::clear();
-    int16_t pga_channel = chan % 8;
-    int16_t xx = chan / 8; // Sorry about the name, not sure yet...
-    int8_t plex_channel = 0x01 << pga_channel;
+    uint8_t pga_channel = chan % 8;
+    uint8_t xx = chan / 8; // Sorry about the name, not sure yet...
+    uint8_t plex_channel = 0;
+    constants::multiplex::PLXMDL plex_model = constants::multiplex::plxUsed;
+    if (plex_model == constants::multiplex::p9848) // Model allows for simultaneous 8-bit chan enable
+    {
+        plex_channel = 0x01 << pga_channel;
+    }
+    else if (plex_model == constants::multiplex::p9847) // Model uses 3-bits to enable 8 channels + 1-bit disable (B3), so no sim. enable
+    {
+        plex_channel = 0x08 + pga_channel; // enable bit at B3 + 7-bit target pga
+    }
+    else
+    {
+        return -1;
+    }
     multipga::enableChannel(cplex::plex_a_addr + xx, plex_channel);
+    return 0;
 }
 
 uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) // writeToPGA in pga309.cpp
@@ -69,15 +83,40 @@ uint16_t multipga::writePGA(uint8_t addr, float val1, float val2, float val3) //
                      " to address " + std::to_string(addr));
     Wire2.beginTransmission(cplex::pga_addr);
     Wire2.write(addr);
-    int16_t raw_2byte = writeSelect(addr, val1, val2, val3);
+    uint16_t raw_2byte = writeSelect(addr, val1, val2, val3);
     uint8_t write_array[2] = {};
     memcpy(write_array, &raw_2byte, 2);
     Wire2.write(write_array, 2);
-    Wire2.endTransmission();
+    // Reports success or failure of write transmit
+    switch (Wire2.endTransmission())
+    {
+    case 0:
+        comm::sendString("Successful write to amplifier.");
+        break;
+    case 1:
+        comm::sendString("***ERROR: Write buffer overflow. Please replug device.***");
+        break;
+    case 2:
+        comm::sendString("***ERROR: Amplifier did not acknowledge address. Please replug device.***");
+        break;
+    case 3:
+        comm::sendString("***ERROR: Amplifier did not acknowledge data. Please replug device.***");
+        break;
+    case 4:
+        comm::sendString("***ERROR: Unknown write error to amplifier. Please replug device.***");
+        break;  
+    default:
+        break;
+    }
+    if (readPGA(addr) != raw_2byte){
+        comm::sendString("***ERROR: Stored register value read does not match write message. Replugging is advised.***");
+    }
+    // TODO: Return error codes instead if NACK or read mismatch occurs.
+    // TODO: Repeat write if NACK occurs so unplugging is not required.
     return raw_2byte;
 }
 
-void multipga::readPGA(uint8_t addr)
+uint16_t multipga::readPGA(uint8_t addr)
 {
     uint8_t redundancy_bytes = 5;
     std::array<uint8_t, 2> temp_byte_holder;
@@ -86,26 +125,32 @@ void multipga::readPGA(uint8_t addr)
         Wire2.beginTransmission(cplex::pga_addr);
         Wire2.write(addr);
         Wire2.requestFrom(cplex::pga_addr, 2, I2C_NOSTOP);
-        //Wire2.available();
         while (Wire2.available())
         {
-            // Note: tried to back in reverse order, so we can use the packing machinery
-            temp_byte_holder[0] = Wire2.readByte();
             temp_byte_holder[1] = Wire2.readByte();
+            temp_byte_holder[0] = Wire2.readByte();
         }
-        Wire2.endTransmission();
+        if (Wire2.endTransmission() != 0) // returns 0 if slave acknowledge successful, non-0 if unsucessful
+        {
+            comm::sendString("ERROR: I2C amplifier failed to acknowledge.");
+            return 0; // Zero message if NACK
+        }
     }
+    uint16_t pgaMsg = 0;
     if (addr == 0x00)
     {
         uint16_t count = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder); //TODO: sanity check?
         float temperature = 0.0625 * count;
         comm::sendString("Temperature: " + std::to_string(temperature));
+        pgaMsg = count;
     }
     else
     {
         uint16_t error_code = packing::bigEndBytesToNum<uint16_t>(temp_byte_holder);
-        comm::sendString("Error code: " + std::to_string(error_code));
+        comm::sendString("Read code: " + std::to_string(error_code));
+        pgaMsg = error_code;
     }
+    return pgaMsg;
 }
 
 uint16_t fineOffsetToHex(float fine_offset)
