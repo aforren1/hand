@@ -105,8 +105,8 @@ PGASettings::PGASettings()
             gains_and_offsets[i][j][5] = 0.25 * constants::calibration::mvcc; // fine offset (TODO: fix)
         }
     }
-    lower_bounds = {{0, 0, 0, 0, 0, 0}};
-    upper_bounds = {{128, 1, 9, 128 * 9, 0, constants::calibration::mvcc}}; // TODO: Check coarse offset bounds
+    lower_bounds = {{0, 0, 0, 0, -constants::calibration::coarse_max, 0}};
+    upper_bounds = {{128, 1, 9, 128 * 9, constants::calibration::coarse_max, constants::calibration::mvcc}};
 }
 
 void PGASettings::updateProduct(int8_t finger, int8_t channel, int8_t stage)

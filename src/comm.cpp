@@ -89,8 +89,9 @@ void comm::sendRawPacket(std::array<uint8_t, 64> &tx_data)
 
 void comm::sendString(std::string tx_string)
 {
-    tx_string.append(64 - tx_string.length(), ' ');
-    Serial.write(tx_string.c_str(), 64);
+    tx_string.append(63 - tx_string.length(), ' ');
+    tx_string.append(1,'\n');
+    Serial.write(tx_string.c_str(), 64); // Read by Serial Mon as ASCII
     Serial.send_now();
 }
 

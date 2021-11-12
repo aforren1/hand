@@ -44,9 +44,10 @@ const uint16_t max_iter = 1;              ///< maximum iterations in optimizatio
 const uint16_t max_fine_iter = 10;        ///< Maximum iterations of fine step
 const unsigned int n_adc_readings = 1000; ///< number of ADC readings to average over
 const float target_fraction = 0.5;        ///< Trying to land between 0 and 1?
-const float vcc = 3.33;                   ///< Matching Jacob here, but should it be 3.3?
+const float vcc = 3.3;                   ///< 3.3 V reference from https://datasheet.octopart.com/ADP150AUJZ-3.3-R7-Analog-Devices-datasheet-8464465.pdf
 const float mvcc = vcc * 1000;
 const float tol_mv = 20; ///< Used for fine adjustments
+const float coarse_max = 14 * 0.85 * vcc; // Vcc = mVcc * 10^-3, coarse max units in mV
 };
 
 namespace multiplex
@@ -55,6 +56,8 @@ const uint8_t pga_addr = 0x40;
 const uint8_t plex_a_addr = 0x70;
 const uint8_t plex_b_addr = 0x71;
 const uint8_t plex_c_addr = 0x72;
+enum PLXMDL {p9847, p9848};
+const PLXMDL plxUsed = p9848; // Switch to p9848 if a simultaneous channel enable plex is used, switch to p9847 if a single channel enable plex is used
 
 const std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped states
                                                 "I2C_TIMEOUT",   //  |
@@ -69,6 +72,9 @@ const std::array<std::string, 13> i2c_names = {{"I2C_WAITING",   // stopped stat
                                                 "I2C_RECEIVING", //  |
                                                 "I2C_SLAVE_TX",  //  |
                                                 "I2C_SLAVE_RX"}};
+
+const std::array<float, 6> power_on_settings = {{4.0, 0.5, 2.0, 4.0, 0.0, 0.25*constants::calibration::mvcc}};
+
 };
 };
 

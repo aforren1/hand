@@ -35,12 +35,12 @@ bool loop_led_status = false; // BUILTIN_LED blinks when data is being acquired
 void setup()
 {
     comm::setupComm();
-    delay(200);
+    delay(6000); // Was 200, we need to see calibration start in serial monitor
     comm::sendString("Beginning setup.");
     // put all the analog pins in INPUT mode
     for (const auto &pin : constants::pin::sensor_pins)
     {
-        pinMode(pin, INPUT);
+        pinMode(pin, INPUT_DISABLE); // disable digital keeper resistors to mitigate nonlinearity
     }
     pinMode(LED_BUILTIN, OUTPUT);                         // Toggle onboard LED
     pinMode(constants::pin::led_for_calibration, OUTPUT); // Toggle calibration LED
@@ -54,7 +54,6 @@ void setup()
 #ifndef NOHARDWARE ///< disable communication via I2C (allows us to develop without the full device)
     multipga::init();
     calibration::calibrateAllChannels(settings.pga_settings);
-    // TODO: send settings to PGA
 #endif
     adc_data_timestamp = 0;
     between_adc_readings_timer = 0;

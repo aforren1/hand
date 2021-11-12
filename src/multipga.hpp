@@ -6,12 +6,12 @@
 namespace multipga
 {
 void init();                                     // init method (start comm, feed in default settings)
-void setChannel(uint8_t channel);                // select single I2C channel across all multiplexers (== plexSelect)
+uint8_t setChannel(uint8_t channel);                // select single I2C channel across all multiplexers (== plexSelect)
 void clear();                                    // clear all I2C channels across all multiplexers (== plexClear)
 void enableChannel(uint8_t device, uint8_t msg); // sends channel enable message to multiplexer with target address (== switchPlex)
 
 // originally from pga309.cpp
-void readPGA(uint8_t addr);
+uint16_t readPGA(uint8_t addr);
 uint16_t writePGA(uint8_t addr, float val1, float val2, float val3);
 }
 
